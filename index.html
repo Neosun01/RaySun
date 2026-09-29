@@ -3,10 +3,10 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Ray · 孙睿 — Interaction designer for finance</title>
-  <meta name="description" content="Ray (孙睿) — interaction designer working almost entirely inside financial products. Print → UI → UX." />
-  <meta property="og:title" content="Ray · 孙睿" />
-  <meta property="og:description" content="Interaction designer for finance." />
+  <title>Ray's Collection of Life — Ray · 孙睿</title>
+  <meta name="description" content="Ray (孙睿) — a personal space for stories, milestones, and work." />
+  <meta property="og:title" content="Ray's Collection of Life" />
+  <meta property="og:description" content="Ray's personal space." />
   <meta property="og:type" content="website" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -16,50 +16,129 @@
 <body>
   <!-- NAV -->
   <header class="nav" aria-label="Primary">
-    <a class="logo" href="#top" aria-label="Home">◆ Ray</a>
+    <a class="brand" href="#top" aria-label="Home">
+      <img class="brand-logo" src="assets/ray-logo.svg" alt="" />
+      <span class="brand-name" data-i18n="nav.brand">Ray's Collection of Life</span>
+    </a>
     <nav class="nav-right">
       <ul class="nav-links">
-        <li><a href="#about">About</a></li>
-        <li><a href="#projects">Projects</a></li>
-        <li><a href="#skills">Skills</a></li>
-        <li><a href="#timeline">Timeline</a></li>
+        <li><a href="#about" data-i18n="nav.about">About</a></li>
+        <li><a href="#story" data-i18n="nav.timeline">Timeline</a></li>
+        <li><a href="#projects" data-i18n="nav.projects">Projects</a></li>
+        <li><a href="#skills" data-i18n="nav.skills">Skills</a></li>
       </ul>
       <div class="lang-toggle" role="group" aria-label="Language">
         <button type="button" class="seg active" data-lang="en" aria-pressed="true">EN</button>
         <button type="button" class="seg" data-lang="zh" aria-pressed="false">中</button>
       </div>
-      <a class="cta" href="#contact">Contact →</a>
+      <a class="cta" href="#contact" data-i18n="nav.contact">Contact →</a>
     </nav>
   </header>
 
   <main id="top">
     <!-- HERO -->
-    <section class="hero" aria-labelledby="hero-title">
-      <span class="eyebrow"><span class="dot"></span>Designing for finance · Open for UX work</span>
-      <h1 id="hero-title">Designing finance<br/>interfaces that feel<br/>obvious in hindsight.</h1>
-      <p class="sub">I'm Ray (孙睿) — a designer focused on interaction, working almost entirely inside financial products. From print to UI to UX, one thread has stayed the same: making complex flows feel calm, clear, and inevitable.</p>
-      <div class="cta-row">
-        <a href="#projects" class="btn btn-primary">View selected work</a>
-        <a href="#contact" class="btn btn-secondary">Say hello</a>
+    <section class="hero" id="about" aria-labelledby="hero-title">
+      <div class="hero-head">
+        <p class="hero-welcome"><span data-i18n="hero.welcome">Welcome</span> <span aria-hidden="true">👋</span></p>
+        <h1 id="hero-title" data-i18n="hero.title">Ray's personal space</h1>
       </div>
+      <p class="sub" data-i18n="hero.p1">Hi, everyone. Life has quietly gone by for over 30 years now, and I've always wanted a place to properly document this journey. I'll be updating this space over time, with stories from my childhood, my school days, my career, the things I love, and the people who've walked alongside me.</p>
+      <p class="sub" data-i18n="hero.p2">If you've somehow found your way to this link — thank you for stopping by.</p>
     </section>
 
-    <!-- ABOUT -->
-    <section class="section" id="about">
+    <!-- MY STORY -->
+    <section class="section" id="story">
       <header class="section-head">
-        <p class="kicker">01 — About</p>
-        <h2>About</h2>
+        <p class="kicker" data-i18n="story.kicker">01 — MY STORY</p>
+        <h2 data-i18n="story.title">Some Milestones in Life</h2>
       </header>
-      <div class="about-body">
-        <div class="about-copy">
-          <p>I design finance — the flows people don't enjoy but still have to trust. Trading, payments, accounts, onboarding, KYC. Print taught me hierarchy. UI taught me systems. UX is where the two meet — where the surface has to disappear so a user can move money and know exactly what just happened.</p>
-          <p class="muted">Interaction is where I keep landing. In finance especially, the difference between a good screen and a good product is measured in the small moments — the confirmation that lands right, the state that never surprises, the friction placed exactly where it protects the user. My goal on every project is the same: make it feel inevitable.</p>
+
+      <!-- Underlined tabs -->
+      <div class="story-tabs-line" role="tablist" aria-label="Life period">
+        <button type="button" class="tabline active" role="tab" aria-selected="true" data-tab="work" data-i18n="story.tab.work">Era of Work</button>
+        <button type="button" class="tabline" role="tab" aria-selected="false" data-tab="school" data-i18n="story.tab.school">Era of Students</button>
+      </div>
+
+      <!-- Timeline -->
+      <div class="timeline">
+        <!-- Year row: 11 years evenly distributed across the whole timeline.
+             Chip widths below use the same 4:2:3:1 ratio (matching real years
+             per job), so chip boundaries land exactly on the real year ticks. -->
+        <div class="year-row" aria-hidden="true">
+          <div class="year-cell">
+            <span>2017</span>
+            <span class="year-alt">2018</span>
+            <span>2019</span>
+            <span class="year-alt">2020</span>
+          </div>
+          <div class="year-cell">
+            <span>2021</span>
+            <span class="year-alt">2022</span>
+          </div>
+          <div class="year-cell">
+            <span>2023</span>
+            <span class="year-alt">2024</span>
+            <span>2025</span>
+          </div>
+          <div class="year-cell">
+            <span class="year-alt">2026</span>
+          </div>
+          <span class="year-end">2027</span>
         </div>
-        <div class="stats">
-          <div class="stat"><div class="stat-num">07+</div><div class="stat-lbl">Years designing</div></div>
-          <div class="stat divider"><div class="stat-num">40</div><div class="stat-lbl">Products shipped</div></div>
-          <div class="stat divider"><div class="stat-num">3</div><div class="stat-lbl">Disciplines — Print · UI · UX</div></div>
-          <div class="stat divider"><div class="stat-num">∞</div><div class="stat-lbl">Iterations, and counting</div></div>
+
+        <!-- Chip row: 4 chips + a trailing spacer that keeps the row aligned with the year row -->
+        <div class="chip-row">
+          <button type="button" class="chipbar chipbar--ui" data-job="ui-early">
+            <span class="chipbar-icons">
+              <img class="chipbar-icon chipbar-icon--stack" src="assets/xy.svg" alt="" />
+              <img class="chipbar-icon" src="assets/iyou.svg" alt="" />
+            </span>
+            <span class="chipbar-text">
+              <span class="chipbar-title" data-i18n="job.uiEarly.role">UI Design</span>
+              <span class="chipbar-sub" data-i18n="job.uiEarly.orgs">Two companies early in my career</span>
+            </span>
+          </button>
+          <button type="button" class="chipbar" data-job="futu">
+            <img class="chipbar-icon" src="assets/futu-new.svg" alt="" />
+            <span class="chipbar-text">
+              <span class="chipbar-title" data-i18n="role.ue">UE Design</span>
+              <span class="chipbar-sub" data-i18n="job.futu.name">FUTU</span>
+            </span>
+          </button>
+          <button type="button" class="chipbar" data-job="okx">
+            <img class="chipbar-icon" src="assets/okx-new.svg" alt="" />
+            <span class="chipbar-text">
+              <span class="chipbar-title" data-i18n="role.ux">UX Design</span>
+              <span class="chipbar-sub" data-i18n="job.okx.name">OKX</span>
+            </span>
+          </button>
+          <button type="button" class="chipbar" data-job="binance">
+            <img class="chipbar-icon" src="assets/binance-new.svg" alt="" />
+            <span class="chipbar-text">
+              <span class="chipbar-title" data-i18n="role.ux">UX Design</span>
+              <span class="chipbar-sub" data-i18n="job.binance.name">Binance</span>
+            </span>
+          </button>
+        </div>
+
+        <!-- Detail card (default state; hovering a chipbar updates it) -->
+        <div class="detail-card" role="region" aria-live="polite">
+          <div class="detail-avatars" aria-hidden="true">
+            <img src="assets/xy.svg" alt="" />
+            <img src="assets/iyou.svg" alt="" />
+            <img src="assets/futu-new.svg" alt="" />
+            <img src="assets/okx-new.svg" alt="" />
+            <img src="assets/binance-new.svg" alt="" />
+          </div>
+          <div class="detail-title">
+            <p class="detail-name">OKX</p>
+            <p class="detail-meta">
+              <span class="detail-role">UI/UE/UX Design</span>
+              <span class="dot-sep" aria-hidden="true"></span>
+              <span class="detail-period">2024 — NOW</span>
+            </p>
+          </div>
+          <p class="detail-body" data-i18n="story.lead">People are shaped by one scene after another. From family to school, and then to the workplace, each experience quietly changes our appearance and understanding. The experiences accumulated at each stage will also guide our future lives.</p>
         </div>
       </div>
     </section>
@@ -67,111 +146,48 @@
     <!-- PROJECTS -->
     <section class="section" id="projects">
       <header class="section-head">
-        <p class="kicker">02 — Projects</p>
-        <h2>Selected work</h2>
+        <p class="kicker" data-i18n="projects.kicker">02 — PROJECTS</p>
+        <h2 data-i18n="projects.title">Selected work</h2>
       </header>
       <div class="proj-grid">
         <article class="card">
-          <div class="media" style="--tint:#f0f4ff"><div class="preview"></div></div>
+          <div class="media"></div>
           <div class="info">
-            <p class="tag">SaaS · 2025</p>
-            <h3>Northwind Analytics</h3>
-            <p>Rebuilt the reporting surface into a fast, keyboard-first workspace used by 40k teams.</p>
+            <p class="tag" data-i18n="projects.p1.tag">SAAS · 2025.6</p>
+            <h3 data-i18n="projects.p1.title">Northwind Analytics</h3>
+            <p class="desc" data-i18n="projects.p1.desc">Rebuilt the reporting surface into a fast, keyboard-first workspace used by 40k teams.</p>
+            <a href="#" class="link" data-i18n="projects.link">View project</a>
           </div>
         </article>
         <article class="card">
-          <div class="media" style="--tint:#f5f7f0"><div class="preview"></div></div>
+          <div class="media"></div>
           <div class="info">
-            <p class="tag">Design system · 2024</p>
-            <h3>Atlas UI</h3>
-            <p>A quiet component library covering 180 components, tokens for 3 brands, dark mode from day one.</p>
+            <p class="tag" data-i18n="projects.p2.tag">SAAS · 2025.6</p>
+            <h3 data-i18n="projects.p2.title">Northwind Analytics</h3>
+            <p class="desc" data-i18n="projects.p2.desc">Rebuilt the reporting surface into a fast, keyboard-first workspace used by 40k teams.</p>
+            <a href="#" class="link" data-i18n="projects.link">View project</a>
           </div>
         </article>
         <article class="card">
-          <div class="media" style="--tint:#fff2ed"><div class="preview"></div></div>
+          <div class="media"></div>
           <div class="info">
-            <p class="tag">Mobile · 2024</p>
-            <h3>Field Notes</h3>
-            <p>An offline-first field-research app for ecologists — sync when you find signal, work when you don't.</p>
+            <p class="tag" data-i18n="projects.p3.tag">SAAS · 2025.6</p>
+            <h3 data-i18n="projects.p3.title">Northwind Analytics</h3>
+            <p class="desc" data-i18n="projects.p3.desc">Rebuilt the reporting surface into a fast, keyboard-first workspace used by 40k teams.</p>
+            <a href="#" class="link" data-i18n="projects.link">View project</a>
           </div>
         </article>
       </div>
-    </section>
-
-    <!-- SKILLS -->
-    <section class="section" id="skills">
-      <header class="section-head">
-        <p class="kicker">03 — Skills</p>
-        <h2>Skills &amp; tools</h2>
-      </header>
-      <div class="skill-cols">
-        <div class="skill-col">
-          <h4>Design</h4>
-          <div class="chips">
-            <span>UX design</span><span>Interaction</span><span>UI systems</span>
-            <span>Wayfinding</span><span>Visual craft</span><span>Print</span>
-          </div>
-        </div>
-        <div class="skill-col">
-          <h4>Craft</h4>
-          <div class="chips">
-            <span>Interaction</span><span>Prototyping</span><span>Micro-motion</span>
-            <span>Wireflows</span><span>Usability</span><span>Handoff</span>
-          </div>
-        </div>
-        <div class="skill-col">
-          <h4>Tools</h4>
-          <div class="chips">
-            <span>Figma</span><span>Linear</span><span>Illustrator</span>
-            <span>Photoshop</span><span>Framer</span><span>After Effects</span>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- TIMELINE -->
-    <section class="section" id="timeline">
-      <header class="section-head">
-        <p class="kicker">04 — Experience</p>
-        <h2>Timeline</h2>
-      </header>
-      <ol class="tl">
-        <li>
-          <div class="tl-yr">2024 — NOW</div>
-          <div class="tl-body">
-            <p class="tl-role"><strong>Design Engineer</strong><span class="sep">·</span>Independent</p>
-            <p class="tl-blurb">Consulting on design systems and product interfaces for early-stage teams. Building small tools on the side.</p>
-          </div>
-        </li>
-        <li>
-          <div class="tl-yr">2021 — 2024</div>
-          <div class="tl-body">
-            <p class="tl-role"><strong>Senior Product Designer</strong><span class="sep">·</span>Loremco</p>
-            <p class="tl-blurb">Led the checkout &amp; billing surface. Shipped a rewrite that lifted conversion by a comfortable double-digit percent.</p>
-          </div>
-        </li>
-        <li>
-          <div class="tl-yr">2018 — 2021</div>
-          <div class="tl-body">
-            <p class="tl-role"><strong>Product Designer</strong><span class="sep">·</span>Ipsum Labs</p>
-            <p class="tl-blurb">Founding designer. Set up the design system, hired the second designer, learned to love infrastructure work.</p>
-          </div>
-        </li>
-        <li>
-          <div class="tl-yr">2016 — 2018</div>
-          <div class="tl-body">
-            <p class="tl-role"><strong>UI Designer</strong><span class="sep">·</span>Dolor Studio</p>
-            <p class="tl-blurb">Agency life — shipped 30+ marketing sites and dashboards. Where I learned to make things fast without making them ugly.</p>
-          </div>
-        </li>
-      </ol>
     </section>
   </main>
 
   <!-- CONTACT -->
   <section class="contact" id="contact">
-    <p class="kicker kicker-dark">05 — CONTACT</p>
-    <h2>Have an interaction<br/>worth designing?</h2>
+    <p class="kicker kicker-dark" data-i18n="contact.kicker">04 — CONTACT</p>
+    <h2>
+      <span data-i18n="contact.title.l1">Have an interaction</span><br/>
+      <span data-i18n="contact.title.l2">worth designing?</span>
+    </h2>
     <div class="contact-row">
       <a class="btn btn-light" href="mailto:sunrui714142436@gmail.com">sunrui714142436@gmail.com</a>
       <a class="btn btn-ghost" href="https://x.com/Neosun714142436" target="_blank" rel="noopener">X / @Neosun714142436</a>
@@ -180,22 +196,98 @@
   </section>
 
   <footer class="footer">
-    <p>© 2026 Ray · 孙睿 — Designed in Figma</p>
-    <p>Based in finance UX · 2026</p>
+    <p data-i18n="footer.left">© 2026 Ray · Sun Rui — Designed in Figma</p>
+    <p data-i18n="footer.right">Based in finance UX · 2026</p>
   </footer>
 
+  <script src="i18n.js"></script>
   <script>
-    // Language toggle — visual demo only (does not swap copy yet)
-    document.querySelectorAll('.lang-toggle .seg').forEach(btn => {
-      btn.addEventListener('click', () => {
-        document.querySelectorAll('.lang-toggle .seg').forEach(b => {
-          b.classList.remove('active');
-          b.setAttribute('aria-pressed', 'false');
-        });
-        btn.classList.add('active');
-        btn.setAttribute('aria-pressed', 'true');
+    // Detail card refresh using dictionary
+    const card = document.querySelector('.detail-card');
+    const detailName = card.querySelector('.detail-name');
+    const detailRole = card.querySelector('.detail-role');
+    const detailPeriod = card.querySelector('.detail-period');
+    const detailBody = card.querySelector('.detail-body');
+
+    // Default state: OKX summary + intro copy shown
+    const DEFAULT_STATE = {
+      nameKey: 'job.okx.name',
+      role: 'UI/UE/UX Design',
+      periodKey: 'job.okx.period',
+      bodyKey: 'story.lead'
+    };
+
+    const JOB_META = {
+      'ui-early': { nameKey: 'job.uiEarly.role', roleKey: 'job.uiEarly.orgs', periodKey: 'job.uiEarly.period', bodyKey: 'job.uiEarly.body', startYear: 2018, endYear: 2021 },
+      futu:      { nameKey: 'job.futu.name',    roleKey: 'role.ue',           periodKey: 'job.futu.period',    bodyKey: 'job.futu.body',    startYear: 2021, endYear: 2023 },
+      okx:       { nameKey: 'job.okx.name',     roleKey: 'role.ux',           periodKey: 'job.okx.period',     bodyKey: 'job.okx.body',     startYear: 2023, endYear: 2025 },
+      binance:   { nameKey: 'job.binance.name', roleKey: 'role.ux',           periodKey: 'job.binance.period', bodyKey: 'job.binance.body', startYear: 2025, endYear: 2027 }
+    };
+
+    // Year row is now static HTML, aligned to chip columns via CSS grid — no JS needed.
+
+    function applyState(state) {
+      const lang = window.__i18n.currentLang();
+      const d = window.__i18n.DICT[lang];
+      const get = (key, fallback) => (key && d[key] != null) ? d[key] : fallback;
+      detailName.textContent = get(state.nameKey, '');
+      detailRole.textContent = state.roleKey ? get(state.roleKey, state.role || '') : (state.role || '');
+      detailPeriod.textContent = get(state.periodKey, '');
+      detailBody.textContent = get(state.bodyKey, '');
+    }
+
+    // exposed for i18n.applyLang to re-render current state on language change
+    window.refreshDetail = function() {
+      const hoveredJob = document.querySelector('.chipbar.is-hover')?.dataset.job;
+      if (hoveredJob && JOB_META[hoveredJob]) {
+        applyState(JOB_META[hoveredJob]);
+      } else {
+        applyState(DEFAULT_STATE);
+      }
+    };
+
+    document.querySelectorAll('.chipbar').forEach(chip => {
+      chip.addEventListener('mouseenter', () => {
+        const meta = JOB_META[chip.dataset.job];
+        if (meta) applyState(meta);
+      });
+      chip.addEventListener('mouseleave', () => {
+        applyState(DEFAULT_STATE);
+      });
+      // Touch / keyboard: click toggles selection
+      chip.addEventListener('click', () => {
+        const already = chip.classList.contains('is-touch-active');
+        document.querySelectorAll('.chipbar').forEach(c => c.classList.remove('is-touch-active'));
+        if (!already) {
+          chip.classList.add('is-touch-active');
+          applyState(JOB_META[chip.dataset.job] || DEFAULT_STATE);
+        } else {
+          applyState(DEFAULT_STATE);
+        }
       });
     });
+
+    // Underlined tab visual only (no content swap yet)
+    document.querySelectorAll('.story-tabs-line .tabline').forEach(tab => {
+      tab.addEventListener('click', () => {
+        document.querySelectorAll('.story-tabs-line .tabline').forEach(t => {
+          t.classList.remove('active');
+          t.setAttribute('aria-selected', 'false');
+        });
+        tab.classList.add('active');
+        tab.setAttribute('aria-selected', 'true');
+      });
+    });
+
+    // Language toggle handlers
+    document.querySelectorAll('.lang-toggle .seg').forEach(btn => {
+      btn.addEventListener('click', () => {
+        window.__i18n.applyLang(btn.dataset.lang);
+      });
+    });
+
+    // Apply initial language (saved or browser default)
+    window.__i18n.applyLang(window.__i18n.currentLang());
   </script>
 </body>
 </html>

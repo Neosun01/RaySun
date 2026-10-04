@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="zh">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <meta name="robots" content="noindex,nofollow" />
+  <title>编辑作品 · Ray</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="admin.css" />
+</head>
+<body data-list="admin.html" data-edit="admin-edit.html">
+  <!-- Not configured -->
+  <main id="setup" class="auth" hidden>
+    <div class="auth-card">
+      <img class="brand-logo" src="ray-logo.svg" alt="" />
+      <div class="auth-title">
+        <p class="kicker">SETUP</p>
+        <h1>还没有连接数据库</h1>
+      </div>
+      <p class="lead">请先按 <code>README.md</code> 里的「Projects admin」步骤创建 Supabase 项目，并把地址和 key 填进 <code>supabase-config.js</code>。</p>
+      <a class="pill" data-nav="list" href="admin.html">← 返回列表</a>
+    </div>
+  </main>
+
+  <!-- Not signed in -->
+  <main id="need-login" class="auth" hidden>
+    <div class="auth-card">
+      <img class="brand-logo" src="ray-logo.svg" alt="" />
+      <div class="auth-title">
+        <p class="kicker">ADMIN</p>
+        <h1>请先登录</h1>
+      </div>
+      <p class="lead">登录后才能编辑作品。</p>
+      <a class="pill primary block" data-nav="list" href="admin.html">去登录</a>
+    </div>
+  </main>
+
+  <div id="app" hidden>
+    <header class="nav" aria-label="Admin">
+      <a class="brand" href="admin.html" data-nav="list" aria-label="返回作品列表">
+        <img class="brand-logo" src="ray-logo.svg" alt="" />
+        <span class="brand-name">作品后台</span>
+      </a>
+      <nav class="nav-right">
+        <a class="nav-link" href="index.html#projects" target="_blank" rel="noopener">查看网站 ↗</a>
+        <button class="cta" id="logout" type="button">退出</button>
+      </nav>
+    </header>
+
+    <form id="form" class="pg" novalidate>
+      <div class="pg-top">
+        <a class="back" data-nav="list" href="admin.html">← 返回列表</a>
+        <div class="a-title">
+          <p class="kicker" id="page-kicker">NEW PROJECT</p>
+          <h1 id="page-title">新建作品</h1>
+        </div>
+      </div>
+
+      <p id="load-msg" class="msg" role="status"></p>
+
+      <div class="ed-body" id="ed-body" hidden>
+        <div class="ed-fields">
+          <fieldset class="sec">
+            <legend class="kicker">文字 · TEXT</legend>
+            <div class="cols">
+              <div class="col">
+                <span class="lang-pill">中文</span>
+                <label class="field">标题 <input name="title_zh" maxlength="80" /></label>
+                <label class="field">标签 <input name="tag_zh" maxlength="60" placeholder="例：SAAS · 2025.6" /></label>
+                <label class="field">简介 <textarea name="desc_zh" rows="5" maxlength="400"></textarea></label>
+              </div>
+              <div class="col">
+                <span class="lang-pill">English</span>
+                <label class="field">Title <input name="title_en" maxlength="80" /></label>
+                <label class="field">Tag <input name="tag_en" maxlength="60" placeholder="e.g. SAAS · 2025.6" /></label>
+                <label class="field">Description <textarea name="desc_en" rows="5" maxlength="400"></textarea></label>
+              </div>
+            </div>
+          </fieldset>
+
+          <fieldset class="sec">
+            <legend class="kicker">图片 · IMAGES</legend>
+            <label class="drop" for="img-file" id="drop">
+              <span class="drop-plus" aria-hidden="true">＋</span>
+              <span class="drop-hint">点击选择图片，或把图片拖到这里<br /><small>可以一次选多张 · 每个作品最多 12 张</small></span>
+            </label>
+            <input type="file" id="img-file" class="sr-only" multiple accept="image/jpeg,image/png,image/webp,image/gif,image/avif" />
+            <ul id="imgs" class="imgs" aria-label="已添加的图片"></ul>
+            <p class="hint">第一张是封面。拖动缩略图可以调整顺序，也可以用每张图上的 ← → 按钮。JPG / PNG / WebP / GIF / AVIF，每张不超过 10MB。建议 16:10 横图（例如 1280×800）。</p>
+          </fieldset>
+
+          <fieldset class="sec">
+            <legend class="kicker">链接 · LINKS</legend>
+            <label class="field">视频链接
+              <input type="url" name="video_url" placeholder="https://" />
+              <span class="hint">YouTube / Bilibili / Vimeo，或 .mp4 直链；可不填。</span>
+            </label>
+            <label class="field">「查看项目」跳转地址
+              <input type="url" name="link_url" placeholder="https://" />
+              <span class="hint">可不填，不填则卡片上不显示链接。</span>
+            </label>
+          </fieldset>
+
+          <fieldset class="sec">
+            <legend class="kicker">排序 · ORDER</legend>
+            <div class="order">
+              <label class="field">排序数字 <input type="number" name="sort_order" value="0" step="1" class="num" /></label>
+              <span class="hint">数字越小越靠前。建议隔 10 填（10、20、30），以后插入更方便。</span>
+            </div>
+          </fieldset>
+
+          <fieldset class="sec danger-zone" id="danger" hidden>
+            <legend class="kicker">删除 · DELETE</legend>
+            <p class="hint">删除后作品和它的所有图片都会被移除，无法恢复。</p>
+            <button class="pill danger sm" type="button" id="delete">删除这个作品</button>
+          </fieldset>
+        </div>
+
+        <aside class="ed-preview" aria-label="网站预览">
+          <div class="pv-head">
+            <span class="kicker">预览 · PREVIEW</span>
+            <div class="lang-toggle" role="group" aria-label="预览语言">
+              <button type="button" class="seg active" data-pv="zh" aria-pressed="true">中</button>
+              <button type="button" class="seg" data-pv="en" aria-pressed="false">EN</button>
+            </div>
+          </div>
+          <div id="pv-card"></div>
+          <p class="hint">这是卡片在网站上的样子，随你输入实时更新。有多张图时可以在预览里左右切换。</p>
+        </aside>
+      </div>
+
+      <footer class="pg-foot" id="pg-foot" hidden>
+        <div class="foot-info grow">
+          <p id="form-msg" class="msg" role="alert"></p>
+          <p class="status" id="status" aria-live="polite"></p>
+        </div>
+        <a class="pill" data-nav="list" href="admin.html" id="cancel">取消</a>
+        <button class="pill" type="button" id="btn-draft">保存草稿</button>
+        <button class="pill primary" type="button" id="btn-publish">发布到网站</button>
+      </footer>
+    </form>
+  </div>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.2/dist/umd/supabase.min.js"
+          integrity="sha384-WgXwGL6fUsYJWNaKJgVbrJKGRQwc1vieh2oy4kw9nXqpNDz3tdSsqEYUgeHD/NuF"
+          crossorigin="anonymous"></script>
+  <script src="supabase-config.js"></script>
+  <script src="cards.js"></script>
+  <script src="admin-common.js"></script>
+  <script src="admin-edit.js"></script>
+</body>
+</html>

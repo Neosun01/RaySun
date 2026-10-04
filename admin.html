@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="zh">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <meta name="robots" content="noindex,nofollow" />
+  <title>作品后台 · Ray</title>
+  <!-- the admin reuses the site's tokens, fonts, nav, brand and card styles -->
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="admin.css" />
+</head>
+<body data-list="admin.html" data-edit="admin-edit.html">
+  <!-- Login -->
+  <main id="login" class="auth" hidden>
+    <div class="auth-card">
+      <img class="brand-logo" src="ray-logo.svg" alt="" />
+      <div class="auth-title">
+        <p class="kicker">ADMIN</p>
+        <h1>作品后台</h1>
+      </div>
+      <p class="lead">只有你的账号能编辑，访客只能看到已发布的作品。</p>
+      <form id="login-form" class="stack">
+        <label class="field">邮箱 <input type="email" name="email" autocomplete="username" required /></label>
+        <label class="field">密码 <input type="password" name="password" autocomplete="current-password" required /></label>
+        <button class="pill primary block" type="submit">登录</button>
+        <p id="login-msg" class="msg" role="alert"></p>
+      </form>
+    </div>
+  </main>
+
+  <!-- Not configured -->
+  <main id="setup" class="auth" hidden>
+    <div class="auth-card">
+      <img class="brand-logo" src="ray-logo.svg" alt="" />
+      <div class="auth-title">
+        <p class="kicker">SETUP</p>
+        <h1>还没有连接数据库</h1>
+      </div>
+      <p class="lead">请先按 <code>README.md</code> 里的「Projects admin」步骤创建 Supabase 项目，并把地址和 key 填进 <code>supabase-config.js</code>。</p>
+    </div>
+  </main>
+
+  <!-- List -->
+  <div id="app" hidden>
+    <header class="nav" aria-label="Admin">
+      <a class="brand" href="index.html" aria-label="网站首页">
+        <img class="brand-logo" src="ray-logo.svg" alt="" />
+        <span class="brand-name">作品后台</span>
+      </a>
+      <nav class="nav-right">
+        <a class="nav-link" href="index.html#projects" target="_blank" rel="noopener">查看网站 ↗</a>
+        <button class="cta" id="logout" type="button">退出</button>
+      </nav>
+    </header>
+
+    <main class="a-wrap">
+      <section class="a-head">
+        <div class="a-title">
+          <p class="kicker">02 — PROJECTS</p>
+          <h1>精选作品</h1>
+          <p id="stats" class="stats"></p>
+        </div>
+        <a class="pill primary" data-nav="new" href="admin-edit.html">＋ 新建作品</a>
+      </section>
+      <div class="a-tabs" role="tablist" aria-label="作品状态">
+        <button type="button" class="a-tab active" role="tab" id="tab-published" aria-selected="true" aria-controls="list" data-tab="published">
+          已发布 <span class="a-count" id="count-published">0</span>
+        </button>
+        <button type="button" class="a-tab" role="tab" id="tab-draft" aria-selected="false" aria-controls="list" data-tab="draft" tabindex="-1">
+          草稿箱 <span class="a-count" id="count-draft">0</span>
+        </button>
+      </div>
+      <p id="list-msg" class="msg" role="status"></p>
+      <div id="list" class="a-grid" role="tabpanel" aria-labelledby="tab-published"></div>
+    </main>
+  </div>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.2/dist/umd/supabase.min.js"
+          integrity="sha384-WgXwGL6fUsYJWNaKJgVbrJKGRQwc1vieh2oy4kw9nXqpNDz3tdSsqEYUgeHD/NuF"
+          crossorigin="anonymous"></script>
+  <script src="supabase-config.js"></script>
+  <script src="cards.js"></script>
+  <script src="admin-common.js"></script>
+  <script src="admin.js"></script>
+</body>
+</html>

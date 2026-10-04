@@ -109,11 +109,14 @@
   --link: #3342e5;       /* project link blue */
   --ink-dark-bg: #0f1217;
   --gutter: 96px;
+  --safe-l: env(safe-area-inset-left, 0px);   /* notch / rounded corners in landscape */
+  --safe-r: env(safe-area-inset-right, 0px);
+  --safe-b: env(safe-area-inset-bottom, 0px);
   --max: 1440px;
 }
 
 * { box-sizing: border-box; }
-html { scroll-behavior: smooth; }
+html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
 body {
   margin: 0;
   font-family: 'RaySans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Noto Sans SC', sans-serif;
@@ -133,7 +136,7 @@ button { font: inherit; }
   align-items: center;
   justify-content: space-between;
   gap: 32px;
-  padding: 24px var(--gutter);
+  padding: 24px max(var(--gutter), var(--safe-r)) 24px max(var(--gutter), var(--safe-l));
   max-width: var(--max);
   margin: 0 auto;
   position: sticky; top: 0;
@@ -274,166 +277,83 @@ button { font: inherit; }
 
 /* -------- Timeline -------- */
 .timeline {
-  /* Column proportions for the chip row (default state).
-     UI:2017–2021 (4y) · FUTU:2021–2023 (2y) · OKX:2023–2026 (3y) · Binance:2026–2027 (1y) */
-  --col-ui: 4fr;
-  --col-futu: 2fr;
-  --col-okx: 3fr;
-  --col-binance: 1fr;
-
   display: flex; flex-direction: column; gap: 8px;
   width: 100%;
 }
-/* Year row + Chip row: same grid, so year cells expand/shrink with chip widths.
-   Default proportions match real years per job (4:2:3:1) — chip boundaries
-   land exactly on the year ticks. minmax() enforces a minimum column width so
-   the last chip (Binance, only 1yr) stays visually usable. */
-.year-row, .chip-row {
+
+/* Default: every job is a colored block, widths proportional to time span.
+   Active (hover / focus / tap): that job takes the free space, the others collapse to grey.
+   The tracks are written by JS as percentages that always add up to 100%: interpolating
+   percentages moves the chip edges at constant speed (fr values do not), so the chips and
+   the year labels stay in sync. --cols-default / --fr-on are the inputs, tuned per breakpoint
+   so a collapsed chip always fits its 32px logo. */
+.timeline {
+  --dur: .18s;                           /* hover animation length (Figma prototype: .3s) */
+  --ease: cubic-bezier(0, 0, .58, 1);    /* Figma 'Ease out' */
+  --cols-default: 319fr 218fr 264fr 93fr 94fr;
+  --fr-on: 7.3fr;
+}
+.chip-row {
   display: grid;
-  grid-template-columns:
-    minmax(180px, var(--col-ui))
-    minmax(180px, var(--col-futu))
-    minmax(180px, var(--col-okx))
-    minmax(180px, var(--col-binance));
-  transition: grid-template-columns .4s cubic-bezier(.32,.72,0,1);
+  grid-template-columns: var(--cols-default);
   width: 100%;
+  transition: grid-template-columns var(--dur) var(--ease);
 }
-.year-row {
-  position: relative;
-  font-size: 12px; color: #000;
-}
-.year-cell {
-  display: flex;
-  min-width: 0;
-}
-.year-cell span {
-  flex: 1 1 0;
-  min-width: 0;
+
+/* Year axis: 10 fixed labels, positioned from JS (layoutYears) and animated with the chips */
+.year-row { position: relative; height: 15px; font-size: 12px; line-height: normal; color: #9c9c9c; }
+.year {
+  position: absolute; top: 0; left: 0;
   white-space: nowrap;
-  transition: opacity .25s;
+  /* position/transform follow the chip columns; colour & weight switch at the same pace */
+  transition: left var(--dur) var(--ease), transform var(--dur) var(--ease), color var(--dur) var(--ease), opacity var(--dur) var(--ease);
 }
-.year-end {
-  position: absolute;
-  right: 0; top: 0;
-  pointer-events: none;
-}
-
-/* Hover: expand the hovered chip, shrink the others. Year row follows. */
-.timeline:has(.chipbar[data-job="ui-early"]:hover) { --col-ui: 8fr; --col-futu: 1fr; --col-okx: 1fr; --col-binance: 1fr; }
-.timeline:has(.chipbar[data-job="futu"]:hover)     { --col-ui: 1fr; --col-futu: 6fr; --col-okx: 1fr; --col-binance: 1fr; }
-.timeline:has(.chipbar[data-job="okx"]:hover)      { --col-ui: 1fr; --col-futu: 1fr; --col-okx: 6fr; --col-binance: 1fr; }
-.timeline:has(.chipbar[data-job="binance"]:hover)  { --col-ui: 1fr; --col-futu: 1fr; --col-okx: 1fr; --col-binance: 6fr; }
-
-/* When a chip is compressed during hover, its year cell also gets tight.
-   Hide the alternate years (.year-alt) inside non-hovered cells to keep the
-   remaining labels legible. */
-.timeline:has(.chipbar:hover) .year-row .year-cell .year-alt { opacity: 0; }
-.timeline:has(.chipbar[data-job="ui-early"]:hover) .year-cell:nth-of-type(1) .year-alt { opacity: 1; }
-.timeline:has(.chipbar[data-job="futu"]:hover)     .year-cell:nth-of-type(2) .year-alt { opacity: 1; }
-.timeline:has(.chipbar[data-job="okx"]:hover)      .year-cell:nth-of-type(3) .year-alt { opacity: 1; }
-.timeline:has(.chipbar[data-job="binance"]:hover)  .year-cell:nth-of-type(4) .year-alt { opacity: 1; }
-.year-row {
-  font-size: 12px; color: #000;
-}
-.year-cell {
-  display: flex;
-  align-items: center;
-  min-width: 0;
-  overflow: hidden;
-  gap: 8px;
-}
-/* Inside each cell, the years are distributed evenly across that cell's width.
-   Using justify-content: space-between means they hug the two edges — but we
-   want them positioned regularly. Give each span flex:1 with left-align. */
-.year-cell span {
-  flex: 1 1 0;
-  white-space: nowrap;
-}
-.year-end {
-  padding-left: 8px;
-  display: flex; align-items: center;
-  /* place the trailing year "2027" flush against the right end of the timeline */
-  justify-self: end;
-  grid-column: 4 / -1;
-  align-self: center;
-  position: relative;
-  transform: translateX(0);
-  pointer-events: none;
-}
-/* The trailing "2027" should always sit exactly at the timeline's right edge,
-   regardless of chip widths. We place it as an overlay in the last grid cell,
-   right-aligned. */
-.year-row {
-  position: relative;
-}
-.year-row .year-end {
-  position: absolute;
-  right: 0; top: 0;
-}
-
-/* Chip proportions are fixed to real time span; hover only changes the detail card below. */
+.year[data-state="side"] { color: #dbdbdb; }
+.year[data-state="on"]   { color: var(--ink); font-weight: 590; }
 
 .chipbar {
   --chip-bg: var(--bg-soft);
   --chip-fg: #000;
-  --chip-bg-fade: color-mix(in srgb, var(--chip-bg) 22%, white);
+  position: relative;
   border: 0;
   padding: 24px 16px;
   cursor: pointer;
   font: inherit;
   background: var(--chip-bg);
   color: var(--chip-fg);
-  display: flex; align-items: center; gap: 8px;
-  transition: background .25s, color .25s, opacity .25s;
+  display: flex; flex-direction: column; align-items: flex-start; justify-content: center; gap: 8px;
+  transition: background var(--dur) var(--ease), color var(--dur) var(--ease);
   min-width: 0;
   text-align: left;
   overflow: hidden;
-  /* Enable container-based responsiveness inside each chipbar */
   container-type: inline-size;
   container-name: chipbar;
 }
+/* Per-brand colors (match Figma) */
+.chipbar[data-job="shinewing"] { --chip-bg: #7c229b; --chip-fg: #fff; }
+.chipbar[data-job="futu"]      { --chip-bg: #ff6900; --chip-fg: #fff; }
+.chipbar[data-job="okx"]       { --chip-bg: #000000; --chip-fg: #fff; }
+.chipbar[data-job="bitget"]    { --chip-bg: #01aece; --chip-fg: #fff; }
+.chipbar[data-job="binance"]   { --chip-bg: #e9c200; --chip-fg: #fff; }
 
-/* When a chipbar is narrower than the width needed for its text, hide the text
-   and center just the logo(s). Works via CSS container queries — each chipbar
-   independently switches based on its own current width, so the compressed
-   chips during hover show just their icon while the expanded one shows text. */
-@container chipbar (max-width: 140px) {
-  .chipbar-text { display: none; }
-  .chipbar { justify-content: center; padding-left: 8px; padding-right: 8px; }
+/* While a job is active, every other chip turns into a neutral grey block */
+.timeline[data-active] .chipbar:not(.is-active) {
+  --chip-bg: var(--bg-soft);
+  --chip-fg: #000;
 }
-/* Per-brand colors */
-.chipbar--ui                 { --chip-bg: #7c229b; --chip-fg: #fff; }
-.chipbar[data-job="futu"]    { --chip-bg: #ff6432; --chip-fg: #fff; }
-.chipbar[data-job="okx"]     { --chip-bg: #000000; --chip-fg: #fff; }
-.chipbar[data-job="binance"] { --chip-bg: #f0b90b; --chip-fg: #000; }
+/* Hairline between two neighbouring collapsed chips (not next to the active one) */
+.timeline[data-active] .chipbar:not(.is-active) + .chipbar:not(.is-active)::before {
+  content: '';
+  position: absolute; left: 0; top: 24px; bottom: 24px;
+  width: 1px; background: var(--border);
+}
 
-.chipbar .chipbar-title,
-.chipbar .chipbar-sub { color: var(--chip-fg); }
-.chip-end-spacer { display: block; }
-
-/* When any chip is hovered in the row, non-hovered chips reset to a neutral
-   light-gray background with black text (per Figma spec) — no brand color, no
-   fade opacity. */
-.timeline:has(.chipbar:hover) .chipbar {
-  background: #f2f2f2;
-  opacity: 1;
+/* Chip too narrow for its label: fade the text out instead of letting it truncate or
+   re-align. The icon and the text keep their position, so nothing shifts while the chip resizes. */
+.chipbar-text { transition: opacity var(--dur) var(--ease); }
+@container chipbar (max-width: 63px) {
+  .chipbar-text { opacity: 0; }
 }
-.timeline:has(.chipbar:hover) .chipbar .chipbar-title,
-.timeline:has(.chipbar:hover) .chipbar .chipbar-sub {
-  color: #000;
-}
-/* The hovered chip itself keeps its brand color + brand text color. */
-.chipbar:hover {
-  background: var(--chip-bg-hover, var(--chip-bg)) !important;
-  opacity: 1 !important;
-}
-.chipbar:hover .chipbar-title,
-.chipbar:hover .chipbar-sub {
-  color: var(--chip-fg-hover, var(--chip-fg)) !important;
-}
-/* Binance shifts from muted gold (default) to a slightly deeper gold + white
-   text when hovered. Other chips reuse their default brand color/text. */
-.chipbar[data-job="binance"] { --chip-bg-hover: #e9c200; --chip-fg-hover: #fff; }
 
 .chipbar-icon {
   width: 32px; height: 32px;
@@ -441,69 +361,63 @@ button { font: inherit; }
   object-fit: contain;
   /* icons already have their own colored background */
 }
-.chipbar-icons {
-  display: inline-flex;
-  align-items: center;
-  flex-shrink: 0;
-}
-.chipbar-icon--stack {
-  margin-right: -8px; /* overlap */
-  position: relative;
-  z-index: 1;
-}
 .chipbar-text {
-  display: flex; flex-direction: column; gap: 2px;
-  min-width: 0; flex: 1 1 auto;
+  display: flex; flex-direction: column; gap: 4px;
+  min-width: 0; width: 100%;
   overflow: hidden;
 }
 .chipbar-title {
   font-size: 12px; font-weight: 590;
-  color: var(--ink);
-  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  color: var(--chip-fg);
+  white-space: nowrap; overflow: hidden; text-overflow: clip;
 }
 .chipbar-sub {
-  font-size: 12px; font-weight: 400;
-  color: var(--ink);
-  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  font-size: 10px; font-weight: 400;
+  color: var(--chip-fg);
+  white-space: nowrap; overflow: hidden; text-overflow: clip;
 }
 
-/* -------- Detail card -------- */
+/* -------- Detail card --------
+   Default: green intro card. Hovering a job tints the card with that job's brand colour
+   (4% alpha, per Figma) and shows the matching pane. */
 .detail-card {
   width: 100%;
   background: var(--accent);
-  padding: 24px;
-  border-radius: 0;
-  display: flex; flex-direction: column; gap: 10px;
-  margin-top: 0;
+  padding: 24px 16px;
+  transition: background-color var(--dur) var(--ease);
 }
-.detail-avatars {
-  display: flex; gap: 10px; align-items: center;
+.timeline[data-active="shinewing"] .detail-card { background: rgba(124, 34, 155, .04); }
+.timeline[data-active="futu"]      .detail-card { background: rgba(255, 105, 0, .04); }
+.timeline[data-active="okx"]       .detail-card { background: rgba(0, 0, 0, .04); }
+.timeline[data-active="bitget"]    .detail-card { background: rgba(1, 174, 206, .04); }
+.timeline[data-active="binance"]   .detail-card { background: rgba(233, 194, 0, .04); }
+
+/* All panes share one grid cell => the card keeps the height of the longest text.
+   The outgoing pane is gone (opacity 0) within the first 40% of the animation, before the
+   incoming one starts to appear, so the two texts never show at the same time. */
+.detail-stack { display: grid; }
+.detail-pane {
+  grid-area: 1 / 1;
+  display: flex; flex-direction: column; gap: 24px;
+  opacity: 0; visibility: hidden;
+  transition: opacity calc(var(--dur) * .4) linear, visibility 0s linear calc(var(--dur) * .4);
 }
-.detail-avatars img {
-  width: 32px; height: 32px;
-  object-fit: contain;
-  flex-shrink: 0;
+.detail-pane.is-on {
+  opacity: 1; visibility: visible;
+  transition: opacity calc(var(--dur) * .6) var(--ease) calc(var(--dur) * .4), visibility 0s;
 }
-.detail-title {
-  display: flex; flex-direction: column; gap: 2px;
-}
-.detail-name {
-  font-size: 16px; font-weight: 590; color: #000;
-}
+.detail-avatars { display: flex; gap: 10px; align-items: center; }
+.detail-avatars img { width: 32px; height: 32px; object-fit: contain; flex-shrink: 0; }
+.detail-title { display: flex; flex-direction: column; gap: 6px; }
+.detail-name { font-size: 16px; font-weight: 590; color: var(--ink); }
 .detail-meta {
-  font-size: 12px; color: rgba(0,0,0,.4);
+  font-size: 12px; color: var(--ink-2);
   display: inline-flex; align-items: center; gap: 8px;
 }
-.dot-sep {
-  width: 3px; height: 3px; border-radius: 50%;
-  background: rgba(0,0,0,.4);
-  display: inline-block;
-}
-.detail-body {
-  font-size: 17px;
-  color: #474f5c;
-  line-height: 1.65;
-}
+.dot-sep { width: 3px; height: 3px; border-radius: 50%; background: var(--ink-2); display: inline-block; }
+.detail-rule { width: 100%; height: 0; margin: 0; border: 0; border-top: 1px solid rgba(0, 0, 0, .08); }
+.detail-text { display: flex; flex-direction: column; }   /* paragraphs of one job sit tight (22px lines) */
+.detail-body { font-size: 12px; line-height: 22px; color: var(--ink-2); }
 
 /* -------- Projects -------- */
 .proj-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
@@ -515,14 +429,73 @@ button { font: inherit; }
 }
 .card:hover { transform: translateY(-2px); box-shadow: 0 12px 28px rgba(15,18,22,.06); }
 .media {
+  position: relative;
   height: 220px;
   background: var(--border-soft);
+  overflow: hidden;
 }
+.media > img, .media > video, .media > iframe {
+  position: absolute; inset: 0; width: 100%; height: 100%; border: 0; object-fit: cover;
+}
+.media > video, .media > iframe { background: #000; object-fit: contain; }
+.media .play {
+  position: absolute; inset: 0; width: 100%; height: 100%; border: 0; padding: 0; cursor: pointer;
+  background: linear-gradient(rgba(0,0,0,0), rgba(0,0,0,.18));
+}
+.media .play::before {
+  content: ''; position: absolute; left: 50%; top: 50%; width: 56px; height: 56px; margin: -28px 0 0 -28px;
+  border-radius: 50%; background: rgba(255,255,255,.92); box-shadow: 0 4px 16px rgba(0,0,0,.18);
+  transition: transform .18s cubic-bezier(0, 0, .58, 1);
+}
+.media .play::after {
+  content: ''; position: absolute; left: 50%; top: 50%; margin: -9px 0 0 -6px;
+  border-style: solid; border-width: 9px 0 9px 15px; border-color: transparent transparent transparent #111;
+}
+.media .play:hover::before { transform: scale(1.08); }
+.media .play:focus-visible { outline: 2px solid var(--link); outline-offset: -4px; }
+.media .carousel { position: absolute; inset: 0; }
+.media .slides {
+  display: flex; height: 100%; overflow-x: auto; overflow-y: hidden;
+  scroll-snap-type: x mandatory; overscroll-behavior-x: contain; scrollbar-width: none; -webkit-overflow-scrolling: touch;
+}
+.media .slides::-webkit-scrollbar { display: none; }
+.media .slides:focus-visible { outline: 2px solid var(--link); outline-offset: -4px; }
+.media .slide { flex: 0 0 100%; height: 100%; scroll-snap-align: center; scroll-snap-stop: always; }
+.media .slide img { position: static; width: 100%; height: 100%; object-fit: cover; display: block; }
+.media .car-btn {
+  position: absolute; top: 50%; z-index: 2; width: 36px; height: 36px; margin-top: -18px; padding: 0 0 3px;
+  border: 0; border-radius: 50%; background: rgba(255,255,255,.92); color: #111; font: 22px/1 inherit; cursor: pointer;
+  box-shadow: 0 2px 10px rgba(0,0,0,.18); opacity: 0; transition: opacity .18s cubic-bezier(0,0,.58,1), transform .18s cubic-bezier(0,0,.58,1);
+}
+.media .car-prev { left: 10px; }
+.media .car-next { right: 10px; }
+.card:hover .car-btn:not(:disabled), .media:focus-within .car-btn:not(:disabled) { opacity: 1; }
+.media .car-btn:hover { transform: scale(1.08); }
+.media .car-btn:disabled { opacity: 0; pointer-events: none; }
+.media .dots { position: absolute; left: 0; right: 0; bottom: 10px; z-index: 2; display: flex; justify-content: center; gap: 6px; pointer-events: none; }
+.media .dot { width: 6px; height: 6px; padding: 0; border: 0; border-radius: 50%; background: rgba(255,255,255,.55); pointer-events: auto; cursor: pointer; box-shadow: 0 0 0 1px rgba(0,0,0,.12); transition: background .18s, transform .18s; }
+.media .dot[aria-current="true"] { background: #fff; transform: scale(1.35); }
+.media .car-count {
+  position: absolute; right: 10px; bottom: 8px; z-index: 2; padding: 2px 8px; border-radius: 999px;
+  background: rgba(15,18,23,.62); color: #fff; font-size: 11px; font-weight: 590; line-height: 1.5; pointer-events: none;
+}
+.media .play-pill {
+  position: absolute; left: 10px; bottom: 8px; z-index: 2; padding: 4px 12px 4px 26px; border: 0; border-radius: 999px;
+  background: rgba(255,255,255,.94); color: #111; font: 590 12px/1.5 inherit; cursor: pointer; box-shadow: 0 2px 10px rgba(0,0,0,.18);
+}
+.media .play-pill::before { content: ''; position: absolute; left: 11px; top: 50%; margin-top: -5px; border-style: solid; border-width: 5px 0 5px 8px; border-color: transparent transparent transparent #111; }
+.media .play-pill:focus-visible { outline: 2px solid var(--link); outline-offset: 2px; }
+.media .media-close {
+  position: absolute; top: 10px; right: 10px; z-index: 3; width: 32px; height: 32px; padding: 0 0 2px; border: 0; border-radius: 50%;
+  background: rgba(15,18,23,.72); color: #fff; font: 20px/1 inherit; cursor: pointer;
+}
+.proj-empty { grid-column: 1 / -1; color: var(--ink-3); padding: 40px 0; text-align: center; }
 .info { padding: 0 24px 32px; display: flex; flex-direction: column; gap: 24px; }
 .info > * + * { margin: 0; }
 .tag {
   font-size: 14px; color: var(--ink-3);
 }
+.info > h3:first-child { margin-top: 16px; }   /* card without a tag: keep air under the image */
 .info h3 {
   font-size: 24px; font-weight: 590;
   color: var(--ink);
@@ -563,6 +536,7 @@ button { font: inherit; }
   transition: transform .15s;
 }
 .btn:hover { transform: translateY(-1px); }
+.btn { max-width: 100%; overflow-wrap: anywhere; }
 .btn-light { background: #fff; color: var(--ink-dark-bg) !important; }
 .btn-ghost { border: 1px solid #404752; color: #fff !important; }
 
@@ -570,35 +544,92 @@ button { font: inherit; }
 .footer {
   background: var(--ink-dark-bg);
   color: #99a1ad;
-  padding: 28px var(--gutter);
+  padding: 28px max(var(--gutter), var(--safe-r)) 28px max(var(--gutter), var(--safe-l));
   display: flex; justify-content: space-between; align-items: center;
+  padding-bottom: calc(28px + var(--safe-b));
   border-top: 1px solid #262b33;
   font-size: 13px;
 }
 
-/* -------- Responsive -------- */
-@media (max-width: 900px) {
+/* -------- Responsive --------
+   Fluid layout, three steps (no device-specific widths):
+   <=1024  tablet / foldable unfolded (inner screen is close to square, ~700-900 CSS px)
+   <=720   large phone & foldable cover screen in landscape
+   <=480   phone portrait; <=360 very narrow (foldable cover screen ~ 320-360 px) */
+@media (max-width: 1024px) {
+  :root { --gutter: 48px; }
+  .hero { padding: 80px max(var(--gutter), var(--safe-l)) 80px max(var(--gutter), var(--safe-r)); }
+  .hero h1 { font-size: clamp(48px, 8vw, 80px); }
+  .section { padding: 72px max(var(--gutter), var(--safe-l)) 72px max(var(--gutter), var(--safe-r)); gap: 44px; }
+  .proj-grid { grid-template-columns: repeat(2, 1fr); }
+  .timeline { --fr-on: 5fr; }
+  .contact { padding: 88px max(var(--gutter), var(--safe-l)) 88px max(var(--gutter), var(--safe-r)); }
+}
+
+@media (max-width: 720px) {
   :root { --gutter: 24px; }
-  .nav { gap: 12px; }
+  .nav { gap: 12px; padding-top: 16px; padding-bottom: 16px; }
+  .nav-right { gap: 12px; }
   .brand-name { display: none; }
   .nav-links { display: none; }
-  .hero { padding: 64px var(--gutter); gap: 28px; }
+  .hero { padding: 56px max(var(--gutter), var(--safe-l)) 56px max(var(--gutter), var(--safe-r)); gap: 28px; }
   .hero-welcome { font-size: 28px; }
-  .hero h1 { font-size: 48px; }
-  .section { padding: 64px var(--gutter); gap: 40px; }
+  .hero h1 { font-size: clamp(36px, 11vw, 56px); }
+  .sub { font-size: 17px; }
+  .section { padding: 56px max(var(--gutter), var(--safe-l)) 56px max(var(--gutter), var(--safe-r)); gap: 32px; }
   .section-head h2 { font-size: 32px; }
   .head-row { flex-direction: column; align-items: flex-start; }
   .proj-grid { grid-template-columns: 1fr; }
-  /* Mobile timeline: keep horizontal layout but shrink chips to logo-only */
+  .media { height: 180px; }
+  .story-tabs-line { margin-top: -8px; }
+
+  /* Timeline: chips become logo-only, year axis labels only the active job */
+  .timeline { --cols-default: 86fr 58fr 70fr 48fr 48fr; --fr-on: 3.5fr; }
   .year-row { font-size: 10px; }
-  .year-cell span { font-size: 10px; }
-  /* Thin the year ticks to every 2 years to match the tighter layout */
-  .year-alt { display: none; }
-  .chipbar { padding: 16px 8px; justify-content: center; }
-  .chipbar-text { display: none; }  /* always hide text on mobile */
-  .chipbar-icons .chipbar-icon--stack { margin-right: -6px; }
+  .timeline[data-active] .year[data-state="side"] { opacity: 0; }
+  .year-row { height: 12px; }
+  .chipbar { padding: 16px 5px; }   /* logo stays anchored left; 5px keeps it centred in the narrowest chip */
+  .chipbar-text { display: none; }
+  .detail-card { padding: 20px 16px; }
+  .detail-pane { gap: 20px; }
+  .detail-avatars { flex-wrap: wrap; }
   .detail-avatars img { width: 28px; height: 28px; }
-  .contact { padding: 64px var(--gutter); }
-  .contact h2 { font-size: 40px; }
+  .detail-body { font-size: 13px; }
+
+  .contact { padding: 64px max(var(--gutter), var(--safe-l)) 64px max(var(--gutter), var(--safe-r)); }
+  .contact h2 { font-size: clamp(32px, 9vw, 40px); }
   .footer { flex-direction: column; gap: 8px; align-items: flex-start; }
+}
+
+@media (max-width: 480px) {
+  .contact-row { flex-direction: column; align-items: stretch; width: 100%; }
+  .btn { justify-content: center; text-align: center; }
+}
+
+@media (max-width: 360px) {
+  :root { --gutter: 16px; }
+  .brand-logo { width: 32px; height: 32px; }
+  .lang-toggle .seg { padding: 6px 10px; }
+  .cta { padding: 8px 12px; }
+  .section-head h2 { font-size: 28px; }
+  .timeline { --fr-on: 2.5fr; }
+  .year-row { font-size: 9px; }
+}
+
+/* Touch screens: comfortable tap targets, no sticky hover lift */
+@media (hover: none) {
+  .lang-toggle .seg { min-height: 36px; }
+  .story-tabs-line .tabline { min-height: 32px; }
+  .cta:hover, .btn:hover, .card:hover { transform: none; box-shadow: none; }
+  .media .car-btn { display: none; }   /* swipe instead */
+}
+
+/* Landscape phones: keep the sticky nav from eating the screen */
+@media (max-height: 480px) and (orientation: landscape) {
+  .nav { position: static; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { transition: none !important; animation: none !important; }
 }

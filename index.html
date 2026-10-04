@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
   <title>Ray's Collection of Life — Ray · 孙睿</title>
   <meta name="description" content="Ray (孙睿) — a personal space for stories, milestones, and work." />
   <meta property="og:title" content="Ray's Collection of Life" />
@@ -61,84 +61,158 @@
 
       <!-- Timeline -->
       <div class="timeline">
-        <!-- Year row: 11 years evenly distributed across the whole timeline.
-             Chip widths below use the same 4:2:3:1 ratio (matching real years
-             per job), so chip boundaries land exactly on the real year ticks. -->
+        <!-- Year row: 10 fixed labels, positioned by layoutYears() in the script below so they
+             slide together with the chip columns instead of being re-created. -->
         <div class="year-row" aria-hidden="true">
-          <div class="year-cell">
-            <span>2017</span>
-            <span class="year-alt">2018</span>
-            <span>2019</span>
-            <span class="year-alt">2020</span>
-          </div>
-          <div class="year-cell">
-            <span>2021</span>
-            <span class="year-alt">2022</span>
-          </div>
-          <div class="year-cell">
-            <span>2023</span>
-            <span class="year-alt">2024</span>
-            <span>2025</span>
-          </div>
-          <div class="year-cell">
-            <span class="year-alt">2026</span>
-          </div>
-          <span class="year-end">2027</span>
+          <span class="year">2018</span>
+          <span class="year">2019</span>
+          <span class="year">2020</span>
+          <span class="year">2021</span>
+          <span class="year">2022</span>
+          <span class="year">2023</span>
+          <span class="year">2024</span>
+          <span class="year">2025</span>
+          <span class="year">2026</span>
+          <span class="year" data-i18n="timeline.now">Now</span>
         </div>
 
-        <!-- Chip row: 4 chips + a trailing spacer that keeps the row aligned with the year row -->
+        <!-- Chip row: company name on top, role underneath -->
         <div class="chip-row">
-          <button type="button" class="chipbar chipbar--ui" data-job="ui-early">
-            <span class="chipbar-icons">
-              <img class="chipbar-icon chipbar-icon--stack" src="xy.svg" alt="" />
-              <img class="chipbar-icon" src="iyou.svg" alt="" />
-            </span>
+          <button type="button" class="chipbar chipbar--shinewing" data-job="shinewing">
+            <img class="chipbar-icon" src="xy.svg" alt="" />
             <span class="chipbar-text">
-              <span class="chipbar-title" data-i18n="job.uiEarly.role">UI Design</span>
-              <span class="chipbar-sub" data-i18n="job.uiEarly.orgs">Two companies early in my career</span>
+              <span class="chipbar-title" data-i18n="chip.shinewing">ShineWing</span>
+              <span class="chipbar-sub" data-i18n="role.ui">UI Design</span>
             </span>
           </button>
           <button type="button" class="chipbar" data-job="futu">
             <img class="chipbar-icon" src="futu-new.svg" alt="" />
             <span class="chipbar-text">
-              <span class="chipbar-title" data-i18n="role.ue">UE Design</span>
-              <span class="chipbar-sub" data-i18n="job.futu.name">FUTU</span>
+              <span class="chipbar-title" data-i18n="chip.futu">FUTU</span>
+              <span class="chipbar-sub" data-i18n="role.ue">UE Design</span>
             </span>
           </button>
           <button type="button" class="chipbar" data-job="okx">
             <img class="chipbar-icon" src="okx-new.svg" alt="" />
             <span class="chipbar-text">
-              <span class="chipbar-title" data-i18n="role.ux">UX Design</span>
-              <span class="chipbar-sub" data-i18n="job.okx.name">OKX</span>
+              <span class="chipbar-title" data-i18n="chip.okx">OKX</span>
+              <span class="chipbar-sub" data-i18n="role.ux">UX Design</span>
+            </span>
+          </button>
+          <button type="button" class="chipbar" data-job="bitget">
+            <img class="chipbar-icon" src="bitget.svg" alt="" />
+            <span class="chipbar-text">
+              <span class="chipbar-title" data-i18n="chip.bitget">Bitget</span>
+              <span class="chipbar-sub" data-i18n="role.ux">UX Design</span>
             </span>
           </button>
           <button type="button" class="chipbar" data-job="binance">
             <img class="chipbar-icon" src="binance-new.svg" alt="" />
             <span class="chipbar-text">
-              <span class="chipbar-title" data-i18n="role.ux">UX Design</span>
-              <span class="chipbar-sub" data-i18n="job.binance.name">Binance</span>
+              <span class="chipbar-title" data-i18n="chip.binance">Binance</span>
+              <span class="chipbar-sub" data-i18n="role.ux">UX Design</span>
             </span>
           </button>
         </div>
 
-        <!-- Detail card (default state; hovering a chipbar updates it) -->
+        <!-- Detail card: shows the intro by default; hovering a chip switches to that job's pane -->
         <div class="detail-card" role="region" aria-live="polite">
-          <div class="detail-avatars" aria-hidden="true">
-            <img src="xy.svg" alt="" />
-            <img src="iyou.svg" alt="" />
-            <img src="futu-new.svg" alt="" />
-            <img src="okx-new.svg" alt="" />
-            <img src="binance-new.svg" alt="" />
+          <!-- All panes share one grid cell, so the card is always as tall as the longest one -->
+          <div class="detail-stack">
+            <div class="detail-pane is-on" data-pane="default">
+              <div class="detail-avatars" aria-hidden="true">
+                <img src="xy.svg" alt="" />
+                <img src="futu-new.svg" alt="" />
+                <img src="okx-new.svg" alt="" />
+                <img src="bitget.svg" alt="" />
+                <img src="binance-new.svg" alt="" />
+              </div>
+              <div class="detail-title">
+                <p class="detail-name" data-i18n="job.okx.name">OKX</p>
+                <p class="detail-meta">
+                  <span class="detail-role">UI/UE/UX Design</span>
+                  <span class="dot-sep" aria-hidden="true"></span>
+                  <span class="detail-period" data-i18n="job.okx.period">2023 — 2025</span>
+                </p>
+              </div>
+              <hr class="detail-rule" />
+              <p class="detail-body" data-i18n="story.lead">People are shaped by one scene after another. From family to school, and then to the workplace, each experience quietly changes our appearance and understanding. The experiences accumulated at each stage will also guide our future lives.</p>
+            </div>
+            <div class="detail-pane" data-pane="shinewing">
+              <div class="detail-title">
+                <p class="detail-name">信永中和 &amp; 艾优科技</p>
+                <p class="detail-meta">
+                  <span class="detail-role">UI Designer</span>
+                  <span class="dot-sep" aria-hidden="true"></span>
+                  <span class="detail-period">2018.8.1 — 2020.10.15</span>
+                </p>
+              </div>
+              <hr class="detail-rule" />
+              <div class="detail-text">
+                <p class="detail-body">这是一段炙热的日子，无论是工作还是感情，风风火火又乱七八糟，但是一直高亢，热情，剧烈，我的心很乱，所以无论生活在哪里，都是乱世，我就在我的乱世里生活，穿行。但是发生的事情我都不知因果，未发生的事情我的少有期待，就这样随波逐流，被北京的奔忙推着走，但是只是在走，不一定是向前走，也可能原地打转，或是原地踏步，总之在走。</p>
+              </div>
+            </div>
+            <div class="detail-pane" data-pane="futu">
+              <div class="detail-title">
+                <p class="detail-name">FUTU</p>
+                <p class="detail-meta">
+                  <span class="detail-role">UE Designer</span>
+                  <span class="dot-sep" aria-hidden="true"></span>
+                  <span class="detail-period">2020.10.15 — 2022.05.13</span>
+                </p>
+              </div>
+              <hr class="detail-rule" />
+              <div class="detail-text">
+                <p class="detail-body">我的奥德赛时期,就是从这个时候开始的——我开始学着为未来打算。</p>
+                <p class="detail-body">这里要先说一下,我是一个非常自卑的人。自卑到我从未对未来抱有过任何期待,甚至觉得,能这样一直卑微地活着,就已经很好了。</p>
+                <p class="detail-body">而当我进入这家公司之后,我开始对生活和未来充满期待。可想而知,这份工作对我意味着什么——它成为了我对未来抱有期待的一份证明,成为了我可以佩戴的一张名牌。</p>
+                <p class="detail-body">我很清楚,这是一种病态的心理。它说明,在我的生活里,就连这种可怜的认同感,都极少出现。我觉得我不配拥有这份工作，我习惯了向下兼容，这样不会让自己处于下位者，这种失衡，在我心里日复一日地影响着我的情绪。人是无法长期这样活下去的,所以我开始寻找出口,寻求改变。</p>
+                <p class="detail-body">当然寻找的路是艰难的，你在无时无刻的对抗着将近30年养成的惯性，会让人非常的拧巴，就像奥德修斯的回家的弯路。</p>
+              </div>
+            </div>
+            <div class="detail-pane" data-pane="okx">
+              <div class="detail-title">
+                <p class="detail-name">OKX</p>
+                <p class="detail-meta">
+                  <span class="detail-role">UX Designer</span>
+                  <span class="dot-sep" aria-hidden="true"></span>
+                  <span class="detail-period">2022.8.15 — 2025.05.10</span>
+                </p>
+              </div>
+              <hr class="detail-rule" />
+              <div class="detail-text">
+                <p class="detail-body">我的奥德赛时期也覆盖了在OKX的前半段职场时光中，直到在24年的年中，我开始变得有序生长了，我开始安排每天、每周、还有这一年的 Notion，我会坚决执行，我知道这并不是简单的制定计划，而是在维护我内心的秩序，这一切都来的太不容易，我生怕回到无序的混沌中，当这一切都平静下来的时候，我的内心无比开心，25年是非常难熬的一年，钱包的重点项目在新加坡苦苦熬了1个月，顺利收官，结果却给了别人，项目结束以后我开始频繁的更换业务，钱包，交易，行情，在这一年没有成果，只剩疲惫...，25年5月,我提出了离职。那段时间挺难受的，很舍不得，但我也开心，因为这一切并不是我的错，当我发现我终于不会因为这些事情而责怪自己的时候，我发现我开始有了衡量事物的尺度，没错，我发现了自己的优点，它像是一个自卑的孩子在自己创造的湍流人生里，竖起了第一根灯塔。</p>
+              </div>
+            </div>
+            <div class="detail-pane" data-pane="bitget">
+              <div class="detail-title">
+                <p class="detail-name">Bitget</p>
+                <p class="detail-meta">
+                  <span class="detail-role">UX Designer</span>
+                  <span class="dot-sep" aria-hidden="true"></span>
+                  <span class="detail-period">2025.5.15 — 2026.5.15</span>
+                </p>
+              </div>
+              <hr class="detail-rule" />
+              <div class="detail-text">
+                <p class="detail-body">我的奥德赛时期也覆盖了在OKX的前半段职场时光中，直到在24年的年中，我开始变得有序生长了，我开始安排每天、每周、还有这一年的 Notion，我会坚决执行，我知道这并不是简单的制定计划，而是在维护我内心的秩序，这一切都来的太不容易，我生怕回到无序的混沌中，当这一切都平静下来的时候，我的内心无比开心，25年是非常难熬的一年，钱包的重点项目在新加坡苦苦熬了1个月，顺利收官，结果却给了别人，项目结束以后我开始频繁的更换业务，钱包，交易，行情，在这一年没有成果，只剩疲惫...，25年5月,我提出了离职。那段时间挺难受的，很舍不得，但我也开心，因为这一切并不是我的错，当我发现我终于不会因为这些事情而责怪自己的时候，我发现我开始有了衡量事物的尺度。我的人生还挺亮堂的。</p>
+              </div>
+            </div>
+            <div class="detail-pane" data-pane="binance">
+              <div class="detail-title">
+                <p class="detail-name">Binance</p>
+                <p class="detail-meta">
+                  <span class="detail-role">UX Designer</span>
+                  <span class="dot-sep" aria-hidden="true"></span>
+                  <span class="detail-period">2026.5.16 — Now</span>
+                </p>
+              </div>
+              <hr class="detail-rule" />
+              <div class="detail-text">
+                <p class="detail-body">我的奥德赛时期也覆盖了在OKX的前半段职场时光中，直到在24年的年中，我开始变得有序生长了，我开始安排每天、每周、还有这一年的 Notion，我会坚决执行，我知道这并不是简单的制定计划，而是在维护我内心的秩序，这一切都来的太不容易，我生怕回到无序的混沌中，当这一切都平静下来的时候，我的内心无比开心，25年是非常难熬的一年，钱包的重点项目在新加坡苦苦熬了1个月，顺利收官，结果却给了别人，项目结束以后我开始频繁的更换业务，钱包，交易，行情，在这一年没有成果，只剩疲惫...，25年5月,我提出了离职。那段时间挺难受的，很舍不得，但我也开心，因为这一切并不是我的错，当我发现我终于不会因为这些事情而责怪自己的时候，我发现我开始有了衡量事物的尺度。我的人生还挺亮堂的。</p>
+              </div>
+            </div>
           </div>
-          <div class="detail-title">
-            <p class="detail-name">OKX</p>
-            <p class="detail-meta">
-              <span class="detail-role">UI/UE/UX Design</span>
-              <span class="dot-sep" aria-hidden="true"></span>
-              <span class="detail-period">2024 — NOW</span>
-            </p>
-          </div>
-          <p class="detail-body" data-i18n="story.lead">People are shaped by one scene after another. From family to school, and then to the workplace, each experience quietly changes our appearance and understanding. The experiences accumulated at each stage will also guide our future lives.</p>
         </div>
       </div>
     </section>
@@ -201,71 +275,94 @@
   </footer>
 
   <script src="i18n.js"></script>
+  <script src="supabase-config.js"></script>
+  <script src="cards.js" defer></script>
+  <script src="projects.js" defer></script>
   <script>
-    // Detail card refresh using dictionary
-    const card = document.querySelector('.detail-card');
-    const detailName = card.querySelector('.detail-name');
-    const detailRole = card.querySelector('.detail-role');
-    const detailPeriod = card.querySelector('.detail-period');
-    const detailBody = card.querySelector('.detail-body');
+    const timeline = document.querySelector('.timeline');
+    const chipRow = timeline.querySelector('.chip-row');
+    const yearRow = timeline.querySelector('.year-row');
+    const yearEls = [...yearRow.querySelectorAll('.year')];
+    const panes = [...timeline.querySelectorAll('.detail-pane')];
+    const chips = [...chipRow.querySelectorAll('.chipbar')];
+    const JOB_ORDER = chips.map(c => c.dataset.job);
 
-    // Default state: OKX summary + intro copy shown
-    const DEFAULT_STATE = {
-      nameKey: 'job.okx.name',
-      role: 'UI/UE/UX Design',
-      periodKey: 'job.okx.period',
-      bodyKey: 'story.lead'
+    // Index (into the 10 year labels) of the first/last year of each job (per Figma)
+    const JOB_YEARS = {
+      shinewing: [0, 3],  // 2018 – 2021
+      futu:      [3, 5],  // 2021 – 2023
+      okx:       [5, 7],  // 2023 – 2025
+      bitget:    [8, 8],  // 2026   (no Figma state yet, extrapolated)
+      binance:   [7, 9]   // 2025 – Now
     };
 
-    const JOB_META = {
-      'ui-early': { nameKey: 'job.uiEarly.role', roleKey: 'job.uiEarly.orgs', periodKey: 'job.uiEarly.period', bodyKey: 'job.uiEarly.body', startYear: 2018, endYear: 2021 },
-      futu:      { nameKey: 'job.futu.name',    roleKey: 'role.ue',           periodKey: 'job.futu.period',    bodyKey: 'job.futu.body',    startYear: 2021, endYear: 2023 },
-      okx:       { nameKey: 'job.okx.name',     roleKey: 'role.ux',           periodKey: 'job.okx.period',     bodyKey: 'job.okx.body',     startYear: 2023, endYear: 2025 },
-      binance:   { nameKey: 'job.binance.name', roleKey: 'role.ux',           periodKey: 'job.binance.period', bodyKey: 'job.binance.body', startYear: 2025, endYear: 2027 }
-    };
-
-    // Year row is now static HTML, aligned to chip columns via CSS grid — no JS needed.
-
-    function applyState(state) {
-      const lang = window.__i18n.currentLang();
-      const d = window.__i18n.DICT[lang];
-      const get = (key, fallback) => (key && d[key] != null) ? d[key] : fallback;
-      detailName.textContent = get(state.nameKey, '');
-      detailRole.textContent = state.roleKey ? get(state.roleKey, state.role || '') : (state.role || '');
-      detailPeriod.textContent = get(state.periodKey, '');
-      detailBody.textContent = get(state.bodyKey, '');
+    // Column edges (0..1) for the target state, mirroring the fr lists in the CSS
+    function columnEdges(job) {
+      const cs = getComputedStyle(timeline);
+      const frOn = parseFloat(cs.getPropertyValue('--fr-on')) || 7.3;
+      const frs = job
+        ? JOB_ORDER.map(j => j === job ? frOn : 1)
+        : cs.getPropertyValue('--cols-default').trim().split(/\s+/).map(parseFloat);
+      const total = frs.reduce((a, b) => a + b, 0);
+      let acc = 0;
+      return [0, ...frs.map(f => (acc += f) / total)];
     }
 
-    // exposed for i18n.applyLang to re-render current state on language change
-    window.refreshDetail = function() {
-      const hoveredJob = document.querySelector('.chipbar.is-hover')?.dataset.job;
-      if (hoveredJob && JOB_META[hoveredJob]) {
-        applyState(JOB_META[hoveredJob]);
-      } else {
-        applyState(DEFAULT_STATE);
-      }
-    };
-
-    document.querySelectorAll('.chipbar').forEach(chip => {
-      chip.addEventListener('mouseenter', () => {
-        const meta = JOB_META[chip.dataset.job];
-        if (meta) applyState(meta);
-      });
-      chip.addEventListener('mouseleave', () => {
-        applyState(DEFAULT_STATE);
-      });
-      // Touch / keyboard: click toggles selection
-      chip.addEventListener('click', () => {
-        const already = chip.classList.contains('is-touch-active');
-        document.querySelectorAll('.chipbar').forEach(c => c.classList.remove('is-touch-active'));
-        if (!already) {
-          chip.classList.add('is-touch-active');
-          applyState(JOB_META[chip.dataset.job] || DEFAULT_STATE);
-        } else {
-          applyState(DEFAULT_STATE);
+    // The 10 labels are fixed elements; only left/transform/colour change, and those
+    // transition with the same duration + easing as the chip columns, so they slide along.
+    //   active job -> its own years in black, spread over its column
+    //   the rest   -> light grey, packed over the collapsed chips on either side
+    //   no job     -> all years over the full width
+    function layoutYears(job) {
+      const edges = columnEdges(job);
+      const place = (from, to, colFrom, colTo, state, pad) => {
+        const n = to - from + 1;
+        for (let i = 0; i < n; i++) {
+          const t = n > 1 ? i / (n - 1) : 0;
+          const x = (edges[colFrom] + t * (edges[colTo] - edges[colFrom])) * 100;
+          const el = yearEls[from + i];
+          el.style.left = `calc(${x}% + ${pad * (1 - 2 * t)}px)`;
+          el.style.transform = `translateX(${-t * 100}%)`;
+          el.dataset.state = state;
         }
+      };
+      if (!job) return place(0, yearEls.length - 1, 0, JOB_ORDER.length, 'all', 0);
+      const col = JOB_ORDER.indexOf(job);
+      const [first, last] = JOB_YEARS[job];
+      if (first > 0) place(0, first - 1, 0, col, 'side', 12);
+      place(first, last, col, col + 1, 'on', 0);
+      if (last < yearEls.length - 1) place(last + 1, yearEls.length - 1, col + 1, JOB_ORDER.length, 'side', 12);
+    }
+
+    let shown = null;   // job currently expanded (hover / focus / tap), null = default
+    let pinned = null;  // job selected by tap on touch devices
+    function show(job) {
+      shown = job;
+      if (job) timeline.dataset.active = job; else delete timeline.dataset.active;
+      chips.forEach(c => c.classList.toggle('is-active', c.dataset.job === job));
+      panes.forEach(p => p.classList.toggle('is-on', p.dataset.pane === (job || 'default')));
+      layoutYears(job);
+      const edges = columnEdges(job);
+      chipRow.style.gridTemplateColumns = edges.slice(1).map((e, i) => ((e - edges[i]) * 100).toFixed(4) + '%').join(' ');
+    }
+
+    // exposed for i18n.applyLang to re-render after a language change
+    window.refreshDetail = function() { show(shown); };
+    window.addEventListener('resize', () => layoutYears(shown));
+
+    chips.forEach(chip => {
+      const job = chip.dataset.job;
+      chip.addEventListener('mouseenter', () => show(job));
+      chip.addEventListener('focus', () => show(job));
+      chip.addEventListener('blur', () => show(pinned));
+      // Touch: tap toggles selection (hover devices expand on mouseenter instead)
+      chip.addEventListener('click', () => {
+        if (window.matchMedia('(hover: hover)').matches) return;
+        pinned = pinned === job ? null : job;
+        show(pinned);
       });
     });
+    chipRow.addEventListener('mouseleave', () => show(pinned));
 
     // Underlined tab visual only (no content swap yet)
     document.querySelectorAll('.story-tabs-line .tabline').forEach(tab => {

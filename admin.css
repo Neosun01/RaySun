@@ -3,6 +3,9 @@
    (.lang-toggle) and the project card (.card / .media / .info). Only admin-specific bits live here. */
 
 [hidden] { display: none !important; }
+
+/* The home page's 120px nav/hero inset is a public-site design detail: the admin keeps its own 96px gutter. */
+:root { --inset: var(--gutter); --head-inset: var(--gutter); }
 .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 .grow { flex: 1; min-width: 0; }
 .stack { display: flex; flex-direction: column; gap: 14px; }

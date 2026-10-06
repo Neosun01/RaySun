@@ -15,7 +15,7 @@
 </head>
 <body>
   <!-- NAV -->
-  <header class="nav" aria-label="Primary">
+  <header class="nav nav--top" aria-label="Primary">
     <a class="brand" href="#top" aria-label="Home">
       <img class="brand-logo" src="ray-logo.svg" alt="" />
       <span class="brand-name" data-i18n="nav.brand">Ray's Collection of Life</span>
@@ -31,19 +31,25 @@
         <button type="button" class="seg active" data-lang="en" aria-pressed="true">EN</button>
         <button type="button" class="seg" data-lang="zh" aria-pressed="false">中</button>
       </div>
-      <a class="cta" href="#contact" data-i18n="nav.contact">Contact →</a>
     </nav>
   </header>
 
   <main id="top">
     <!-- HERO -->
     <section class="hero" id="about" aria-labelledby="hero-title">
+      <!-- Brush stroke + portrait are one picture per width range (exported from Figma, fades included) -->
+      <picture class="hero-art">
+        <source media="(min-width: 1440px)" srcset="hero-bg-1440.webp" />
+        <source media="(min-width: 1024px)" srcset="hero-bg-1024.webp" />
+        <source media="(min-width: 768px)" srcset="hero-bg-768.webp" />
+        <img class="hero-bg" src="hero-bg-375.webp" alt="" aria-hidden="true" decoding="async" fetchpriority="high" />
+      </picture>
       <div class="hero-head">
-        <p class="hero-welcome"><span data-i18n="hero.welcome">Welcome</span> <span aria-hidden="true">👋</span></p>
-        <h1 id="hero-title" data-i18n="hero.title">Ray's personal space</h1>
+        <p class="hero-welcome"><span>Welcome</span> <span aria-hidden="true">👋</span></p>
+        <h1 id="hero-title">Ray's personal space</h1>
       </div>
-      <p class="sub" data-i18n="hero.p1">Hi, everyone. Life has quietly gone by for over 30 years now, and I've always wanted a place to properly document this journey. I'll be updating this space over time, with stories from my childhood, my school days, my career, the things I love, and the people who've walked alongside me.</p>
-      <p class="sub" data-i18n="hero.p2">If you've somehow found your way to this link — thank you for stopping by.</p>
+      <p class="sub" data-i18n="hero.p1">Life's gone by for over 30 years now, and I've always wanted a place to document my childhood, school days, career, and the things I love.</p>
+      <p class="sub" data-i18n="hero.p2">If you've found your way to this link — thank you for stopping by.</p>
     </section>
 
     <!-- MY STORY -->
@@ -375,6 +381,16 @@
         tab.setAttribute('aria-selected', 'true');
       });
     });
+
+    // Nav: transparent at the very top (as in Figma), frosted glass once the page has scrolled
+    (function () {
+      const nav = document.querySelector('.nav--top');
+      if (!nav) return;
+      let ticking = false;
+      const update = () => { ticking = false; nav.classList.toggle('is-scrolled', window.scrollY > 8); };
+      window.addEventListener('scroll', () => { if (!ticking) { ticking = true; requestAnimationFrame(update); } }, { passive: true });
+      update();
+    })();
 
     // Language toggle handlers
     document.querySelectorAll('.lang-toggle .seg').forEach(btn => {

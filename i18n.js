@@ -11,10 +11,8 @@ const DICT = {
     'nav.contact': 'Contact →',
 
     // Hero
-    'hero.welcome': 'Welcome',
-    'hero.title': "Ray's personal space",
-    'hero.p1': "Hi, everyone. Life has quietly gone by for over 30 years now, and I've always wanted a place to properly document this journey. I'll be updating this space over time, with stories from my childhood, my school days, my career, the things I love, and the people who've walked alongside me.",
-    'hero.p2': "If you've somehow found your way to this link — thank you for stopping by.",
+    'hero.p1': "Life's gone by for over 30 years now, and I've always wanted a place to document my childhood, school days, career, and the things I love.",
+    'hero.p2': "If you've found your way to this link — thank you for stopping by.",
 
     // Story
     'story.kicker': '01 — MY STORY',
@@ -80,10 +78,8 @@ const DICT = {
     'nav.contact': '联系 →',
 
     // Hero
-    'hero.welcome': '你好',
-    'hero.title': 'Ray 的个人空间',
-    'hero.p1': '大家好。日子悄悄地过了 30 多年，我一直想有一个地方好好把它记下来。这里我会慢慢更新 —— 儿时的片段、学生年代、职场路上、我喜欢的事、以及一路上陪着我的人。',
-    'hero.p2': '如果你不经意间来到这里 —— 谢谢你顺道来看看。',
+    'hero.p1': '人生转眼已过去30多年，我一直想找个地方，记录下我的童年、学生时代、职业生涯，还有那些我热爱的事物。',
+    'hero.p2': '如果你偶然找到了这个链接，谢谢你愿意停下来看看。',
 
     // Story
     'story.kicker': '01 — 我的故事',

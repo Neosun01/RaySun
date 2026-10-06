@@ -96,6 +96,13 @@
 
 /* -------- Tokens (updated to match new Figma) -------- */
 :root {
+  /* Hero + nav follow four Figma frames (375 / 768 / 1024 / 1440) and scale smoothly between them.
+     --s1..--s3 are how far the viewport has travelled along each leg (0 .. leg length). */
+  --s1: clamp(0px, calc(100vw - 375px), 393px);
+  --s2: clamp(0px, calc(100vw - 768px), 256px);
+  --s3: clamp(0px, calc(100vw - 1024px), 416px);
+  --head-inset: calc(16px + var(--s2) * 0.25000 + var(--s3) * 0.09615);      /* nav + hero side padding: 16 / 16 / 80 / 120 */
+  --inset: 120px;        /* nav, hero and "My Story" start here in Figma; projects, contact and footer stay on --gutter (96px) */
   --ink: #000000;
   --ink-2: #5b5b5b;      /* secondary text */
   --ink-3: #7d7d7d;      /* tertiary text */
@@ -136,7 +143,7 @@ button { font: inherit; }
   align-items: center;
   justify-content: space-between;
   gap: 32px;
-  padding: 24px max(var(--gutter), var(--safe-r)) 24px max(var(--gutter), var(--safe-l));
+  padding: 24px max(var(--head-inset), var(--safe-r)) 24px max(var(--head-inset), var(--safe-l));   /* Figma: 120 / 80 / 16 / 16 */
   max-width: var(--max);
   margin: 0 auto;
   position: sticky; top: 0;
@@ -144,6 +151,19 @@ button { font: inherit; }
   backdrop-filter: saturate(180%) blur(12px);
   -webkit-backdrop-filter: saturate(180%) blur(12px);
   z-index: 10;
+  box-sizing: border-box; min-height: 88px;
+}
+/* Public page: the nav is see-through over the brush stroke at the top, and turns frosted once you scroll */
+.nav--top {
+  background: transparent;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  transition: background-color .2s cubic-bezier(0, 0, .58, 1), backdrop-filter .2s cubic-bezier(0, 0, .58, 1), -webkit-backdrop-filter .2s cubic-bezier(0, 0, .58, 1);
+}
+.nav--top.is-scrolled {
+  background: rgba(255,255,255,.85);
+  backdrop-filter: saturate(180%) blur(12px);
+  -webkit-backdrop-filter: saturate(180%) blur(12px);
 }
 .brand { display: inline-flex; align-items: center; gap: 16px; }
 .brand-logo { width: 40px; height: 40px; }
@@ -151,6 +171,11 @@ button { font: inherit; }
   font-size: 14px; font-weight: 590; letter-spacing: 0;
   color: var(--ink-2);
 }
+/* Figma sets the nav text with line-height: normal (17px for 14px type); the page default is 1.5.
+   That makes the bar 88px tall and the toggle / Contact pills 39px / 37px, as designed. */
+.nav, .nav * { line-height: normal; }
+.nav button { line-height: 17px; }          /* 14px type in Figma = 17px line: segment 29px, toggle 39px */
+.nav .cta { line-height: 17px; }               /* Contact pill = 17 + 2*10 = 37px */
 .nav-right { display: flex; align-items: center; gap: 28px; }
 .nav-links { display: flex; gap: 28px; }
 .nav-links a {
@@ -192,31 +217,65 @@ button { font: inherit; }
 }
 .cta:hover { transform: translateY(-1px); }
 
-/* -------- Hero -------- */
+/* -------- Hero --------
+   Four Figma frames (375 / 768 / 1024 / 1440); every number below is interpolated between them with --s1..--s3.
+   The portrait is the same picture at every size (it already carries its own fades); the brush stroke has
+   its own artwork for the phone and tablet frames. */
 .hero {
+  position: relative;
   max-width: var(--max);
   margin: 0 auto;
-  padding: 120px var(--gutter);
+  padding: calc(48px + var(--s2) * 0.28125) max(var(--head-inset), var(--safe-r)) calc(48px + var(--s2) * 0.28125 + var(--s3) * 0.02404) max(var(--head-inset), var(--safe-l));
   display: flex;
   flex-direction: column;
-  gap: 40px;
+  gap: calc(32px + var(--s2) * 0.03125);
+  isolation: isolate;          /* keeps the artwork behind the text without touching other sections */
 }
+.hero > * { position: relative; z-index: 1; }
+.hero-head, .hero .sub { width: calc(239px + var(--s1) * 0.52672 + var(--s2) * 0.87891 + var(--s3) * 0.43269); max-width: 100%; }
+
+/* Artwork: ONE picture per width range, exported from Figma (brush stroke + portrait + its fades, transparent).
+   >=1440 / 1024-1439 / 768-1023 / <768 use the 1440 / 1024 / 768 / 375 frame. Each image sits where it sits in
+   its frame, and slides right as the window grows inside its range so the portrait never runs under the text
+   (--s1..--s3 are the same ramps the text uses).
+   The layer starts at the very top of the page (behind the transparent nav) and clips itself. */
+.hero > .hero-art {
+  display: block;
+  position: absolute; z-index: 0; pointer-events: none; user-select: none;
+  left: 0; right: 0; bottom: 0; top: -88px;
+  overflow: hidden;
+  /* whenever the hero is shorter than the picture, the portrait still melts into the page instead of a hard cut */
+  -webkit-mask-image: linear-gradient(to bottom, #000 calc(100% - 110px), transparent 100%);
+          mask-image: linear-gradient(to bottom, #000 calc(100% - 110px), transparent 100%);
+}
+.hero-art .hero-bg { position: absolute; max-width: none; height: auto; display: block; }
+/* 375 frame (default, <768):   x -57, y -6,    1082/2 = 541 wide   */
+.hero-art .hero-bg { width: 541px; left: calc(-57px + var(--s1) * 0.694); top: -6px; }
+/* 768 frame:                   x -107, y 0,    861 wide            */
+@media (min-width: 768px)  { .hero-art .hero-bg { width: 861px;  left: calc(-107px + var(--s2) * 0.961); top: 0; } }
+/* 1024 frame:                  x -314, y -2.8, 1533 wide           */
+@media (min-width: 1024px) { .hero-art .hero-bg { width: 1533px; left: calc(-314px + var(--s3) * 0.5305); top: -2.8px; } }
+/* 1440 frame:                  x -118, y -2.8, 1496.5 wide         */
+@media (min-width: 1440px) { .hero-art .hero-bg { width: 1496.5px; left: -118px; top: -2.8px; } }
+
 .hero-head { display: flex; flex-direction: column; gap: 8px; }
 .hero-welcome {
-  font-size: 40px; font-weight: 900;
+  font-size: calc(24px + var(--s2) * 0.06250); font-weight: 900;
+  line-height: 1.2;            /* Figma: auto */
   color: var(--ink);
 }
 .hero h1 {
-  font-size: 80px; font-weight: 900;
+  font-size: calc(32px + var(--s1) * 0.02036 + var(--s2) * 0.15625); font-weight: 900;
   color: var(--ink);
-  line-height: 1;
-  letter-spacing: -0.01em;
+  line-height: 1.1875;         /* Figma: auto (95px at 80px) */
+  letter-spacing: 0;
 }
 .sub {
-  font-size: 20px;
-  color: var(--ink-3);
-  line-height: 1.55;
-  max-width: 100%;
+  font-family: 'Inter', 'RaySans', -apple-system, 'Noto Sans SC', sans-serif;   /* Figma: Inter Regular */
+  font-size: calc(12px + var(--s2) * 0.03125);
+  line-height: calc(20px + var(--s2) * 0.04688);
+  font-weight: 400;
+  color: #9c9c9c;              /* Figma: text/6 */
 }
 
 /* -------- Section shell -------- */
@@ -228,6 +287,7 @@ button { font: inherit; }
   flex-direction: column;
   gap: 56px;
 }
+#story { padding-left: var(--inset); padding-right: var(--inset); }
 .section-head { display: flex; flex-direction: column; gap: 12px; }
 .kicker {
   font-size: 12px; font-weight: 500;
@@ -492,6 +552,7 @@ button { font: inherit; }
 .proj-empty { grid-column: 1 / -1; color: var(--ink-3); padding: 40px 0; text-align: center; }
 .info { padding: 0 24px 32px; display: flex; flex-direction: column; gap: 24px; }
 .info > * + * { margin: 0; }
+.info, .info > * { min-width: 0; overflow-wrap: anywhere; }   /* long words / URLs wrap instead of being clipped */
 .tag {
   font-size: 14px; color: var(--ink-3);
 }
@@ -557,26 +618,21 @@ button { font: inherit; }
    <=720   large phone & foldable cover screen in landscape
    <=480   phone portrait; <=360 very narrow (foldable cover screen ~ 320-360 px) */
 @media (max-width: 1024px) {
-  :root { --gutter: 48px; }
-  .hero { padding: 80px max(var(--gutter), var(--safe-l)) 80px max(var(--gutter), var(--safe-r)); }
-  .hero h1 { font-size: clamp(48px, 8vw, 80px); }
+  :root { --gutter: 48px; --inset: 48px; }
   .section { padding: 72px max(var(--gutter), var(--safe-l)) 72px max(var(--gutter), var(--safe-r)); gap: 44px; }
+  #story { padding-left: max(var(--inset), var(--safe-l)); padding-right: max(var(--inset), var(--safe-r)); }
   .proj-grid { grid-template-columns: repeat(2, 1fr); }
   .timeline { --fr-on: 5fr; }
   .contact { padding: 88px max(var(--gutter), var(--safe-l)) 88px max(var(--gutter), var(--safe-r)); }
 }
 
 @media (max-width: 720px) {
-  :root { --gutter: 24px; }
-  .nav { gap: 12px; padding-top: 16px; padding-bottom: 16px; }
+  :root { --gutter: 24px; --inset: 24px; }
+  .nav { gap: 12px; }   /* Figma 375: 88px bar, 24px top/bottom, 16px sides */
   .nav-right { gap: 12px; }
-  .brand-name { display: none; }
   .nav-links { display: none; }
-  .hero { padding: 56px max(var(--gutter), var(--safe-l)) 56px max(var(--gutter), var(--safe-r)); gap: 28px; }
-  .hero-welcome { font-size: 28px; }
-  .hero h1 { font-size: clamp(36px, 11vw, 56px); }
-  .sub { font-size: 17px; }
   .section { padding: 56px max(var(--gutter), var(--safe-l)) 56px max(var(--gutter), var(--safe-r)); gap: 32px; }
+  #story { padding-left: max(var(--inset), var(--safe-l)); padding-right: max(var(--inset), var(--safe-r)); }
   .section-head h2 { font-size: 32px; }
   .head-row { flex-direction: column; align-items: flex-start; }
   .proj-grid { grid-template-columns: 1fr; }
@@ -585,13 +641,14 @@ button { font: inherit; }
 
   /* Timeline: chips become logo-only, year axis labels only the active job */
   .timeline { --cols-default: 86fr 58fr 70fr 48fr 48fr; --fr-on: 3.5fr; }
-  .year-row { font-size: 10px; }
+  .year-row { font-size: 11px; }
   .timeline[data-active] .year[data-state="side"] { opacity: 0; }
-  .year-row { height: 12px; }
+  .year-row { height: 14px; }
   .chipbar { padding: 16px 5px; }   /* logo stays anchored left; 5px keeps it centred in the narrowest chip */
   .chipbar-text { display: none; }
   .detail-card { padding: 20px 16px; }
   .detail-pane { gap: 20px; }
+
   .detail-avatars { flex-wrap: wrap; }
   .detail-avatars img { width: 28px; height: 28px; }
   .detail-body { font-size: 13px; }
@@ -607,19 +664,34 @@ button { font: inherit; }
 }
 
 @media (max-width: 360px) {
-  :root { --gutter: 16px; }
+  :root { --gutter: 16px; --inset: 16px; }
   .brand-logo { width: 32px; height: 32px; }
   .lang-toggle .seg { padding: 6px 10px; }
   .cta { padding: 8px 12px; }
   .section-head h2 { font-size: 28px; }
   .timeline { --fr-on: 2.5fr; }
-  .year-row { font-size: 9px; }
+  .year-row { font-size: 10px; }
 }
+
+/* Narrow screens (phones, portrait tablets, inner foldable screens): the detail card follows the visible pane.
+   Hidden panes leave the layout, so short texts don't leave a big empty area. On wide screens the card keeps
+   the height of the longest text so nothing below it jumps while you hover. */
+@media (max-width: 900px) {
+  .detail-stack { display: block; }
+  .detail-pane { display: none; }
+  .detail-pane.is-on { display: flex; animation: pane-in var(--dur) var(--ease); }
+}
+@keyframes pane-in { from { opacity: 0; } to { opacity: 1; } }
 
 /* Touch screens: comfortable tap targets, no sticky hover lift */
 @media (hover: none) {
-  .lang-toggle .seg { min-height: 36px; }
-  .story-tabs-line .tabline { min-height: 32px; }
+  /* Visual size stays as designed; an invisible ::after enlarges the touchable area to >= 44px */
+  .lang-toggle .seg { position: relative; }
+  .lang-toggle .seg::after { content: ''; position: absolute; inset: -8px -2px; }
+  .story-tabs-line .tabline { min-height: 32px; position: relative; }
+  .story-tabs-line .tabline::after { content: ''; position: absolute; inset: -8px -6px; }
+  .media .dot { position: relative; }
+  .media .dot::after { content: ''; position: absolute; inset: -12px -8px; }
   .cta:hover, .btn:hover, .card:hover { transform: none; box-shadow: none; }
   .media .car-btn { display: none; }   /* swipe instead */
 }

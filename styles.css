@@ -437,48 +437,6 @@ button { font: inherit; }
   white-space: nowrap; overflow: hidden; text-overflow: clip;
 }
 
-/* -------- Detail card --------
-   Default: green intro card. Hovering a job tints the card with that job's brand colour
-   (4% alpha, per Figma) and shows the matching pane. */
-.detail-card {
-  width: 100%;
-  background: var(--accent);
-  padding: 24px 16px;
-  transition: background-color var(--dur) var(--ease);
-}
-.timeline[data-active="shinewing"] .detail-card { background: rgba(124, 34, 155, .04); }
-.timeline[data-active="futu"]      .detail-card { background: rgba(255, 105, 0, .04); }
-.timeline[data-active="okx"]       .detail-card { background: rgba(0, 0, 0, .04); }
-.timeline[data-active="bitget"]    .detail-card { background: rgba(1, 174, 206, .04); }
-.timeline[data-active="binance"]   .detail-card { background: rgba(233, 194, 0, .04); }
-
-/* All panes share one grid cell => the card keeps the height of the longest text.
-   The outgoing pane is gone (opacity 0) within the first 40% of the animation, before the
-   incoming one starts to appear, so the two texts never show at the same time. */
-.detail-stack { display: grid; }
-.detail-pane {
-  grid-area: 1 / 1;
-  display: flex; flex-direction: column; gap: 24px;
-  opacity: 0; visibility: hidden;
-  transition: opacity calc(var(--dur) * .4) linear, visibility 0s linear calc(var(--dur) * .4);
-}
-.detail-pane.is-on {
-  opacity: 1; visibility: visible;
-  transition: opacity calc(var(--dur) * .6) var(--ease) calc(var(--dur) * .4), visibility 0s;
-}
-.detail-avatars { display: flex; gap: 10px; align-items: center; }
-.detail-avatars img { width: 32px; height: 32px; object-fit: contain; flex-shrink: 0; }
-.detail-title { display: flex; flex-direction: column; gap: 6px; }
-.detail-name { font-size: 16px; font-weight: 590; color: var(--ink); }
-.detail-meta {
-  font-size: 12px; color: var(--ink-2);
-  display: inline-flex; align-items: center; gap: 8px;
-}
-.dot-sep { width: 3px; height: 3px; border-radius: 50%; background: var(--ink-2); display: inline-block; }
-.detail-rule { width: 100%; height: 0; margin: 0; border: 0; border-top: 1px solid rgba(0, 0, 0, .08); }
-.detail-text { display: flex; flex-direction: column; }   /* paragraphs of one job sit tight (22px lines) */
-.detail-body { font-size: 12px; line-height: 22px; color: var(--ink-2); }
-
 /* -------- Projects -------- */
 .proj-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
 .card {
@@ -646,12 +604,6 @@ button { font: inherit; }
   .year-row { height: 14px; }
   .chipbar { padding: 16px 5px; }   /* logo stays anchored left; 5px keeps it centred in the narrowest chip */
   .chipbar-text { display: none; }
-  .detail-card { padding: 20px 16px; }
-  .detail-pane { gap: 20px; }
-
-  .detail-avatars { flex-wrap: wrap; }
-  .detail-avatars img { width: 28px; height: 28px; }
-  .detail-body { font-size: 13px; }
 
   .contact { padding: 64px max(var(--gutter), var(--safe-l)) 64px max(var(--gutter), var(--safe-r)); }
   .contact h2 { font-size: clamp(32px, 9vw, 40px); }
@@ -673,15 +625,6 @@ button { font: inherit; }
   .year-row { font-size: 10px; }
 }
 
-/* Narrow screens (phones, portrait tablets, inner foldable screens): the detail card follows the visible pane.
-   Hidden panes leave the layout, so short texts don't leave a big empty area. On wide screens the card keeps
-   the height of the longest text so nothing below it jumps while you hover. */
-@media (max-width: 900px) {
-  .detail-stack { display: block; }
-  .detail-pane { display: none; }
-  .detail-pane.is-on { display: flex; animation: pane-in var(--dur) var(--ease); }
-}
-@keyframes pane-in { from { opacity: 0; } to { opacity: 1; } }
 
 /* Touch screens: comfortable tap targets, no sticky hover lift */
 @media (hover: none) {

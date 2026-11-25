@@ -223,6 +223,7 @@ button { font: inherit; }
    its own artwork for the phone and tablet frames. */
 .hero {
   position: relative;
+  z-index: 0;
   max-width: var(--max);
   margin: 0 auto;
   padding: calc(48px + var(--s2) * 0.28125) max(var(--head-inset), var(--safe-r)) calc(48px + var(--s2) * 0.28125 + var(--s3) * 0.02404) max(var(--head-inset), var(--safe-l));
@@ -280,6 +281,8 @@ button { font: inherit; }
 
 /* -------- Section shell -------- */
 .section {
+  position: relative;
+  z-index: 0;
   max-width: var(--max);
   margin: 0 auto;
   padding: 96px var(--gutter);

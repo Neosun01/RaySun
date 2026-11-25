@@ -42,33 +42,33 @@
   var P = CONFIG.comet, R = CONFIG.ripple;
 
   /* ---------------- 涟漪点阵 canvas ---------------- */
-  // 背景层方案：把 body 背景搬到 html 上，body 背景清空；
-  // canvas 设 z-index:-1，夹在 html 背景与所有 body 内容之间 → 所有文字/元素都在点上面。
-  var baseSt = document.createElement('style');
-  baseSt.textContent = 'html{background:var(--bg,#fff)!important}body{background:none!important}';
-  document.head.appendChild(baseSt);
-
+  // 背景层方案：canvas 挂到 html 层（body 之外），天然位于所有 body 内容之下。
+  // 不改 body/html 背景（避免 sticky 导航与 hero 的层叠冲突）。
   var canvas = document.createElement('canvas');
   canvas.id = 'ripple-field';
   canvas.style.cssText = 'position:fixed;inset:0;pointer-events:none;z-index:-1';
-  document.body.insertBefore(canvas, document.body.firstChild);
+  document.documentElement.appendChild(canvas);
 
   var cv = canvas.getContext('2d');
-  var pts = [], DPR = 1, W = 0, H = 0;
+  var pts = [], DPR = 1, W = 0, H = 0, lastW = 0, lastH = 0, lastDPR = 0;
   function buildPts() {
     DPR = Math.min(window.devicePixelRatio || 1, 2);
     W = window.innerWidth; H = window.innerHeight;
+    // 缩放时宽高比可能变化，需要按当前尺寸重建点位，否则点位会错位
     canvas.width = W * DPR; canvas.height = H * DPR;
     canvas.style.width = W + 'px'; canvas.style.height = H + 'px';
     cv.setTransform(DPR, 0, 0, DPR, 0, 0);
     pts = [];
     for (var y = R.gap / 2; y < H; y += R.gap)
       for (var x = R.gap / 2; x < W; x += R.gap) pts.push({ x: x, y: y });
+    lastW = W; lastH = H; lastDPR = DPR;
   }
   buildPts();
   window.addEventListener('resize', buildPts);
 
   function drawRipple(lx, ly, has, now) {
+    // 每帧对齐视口：缩放过程中 resize 事件可能漏触发，这里保证 canvas 与点位始终匹配当前窗口
+    if (window.innerWidth !== lastW || window.innerHeight !== lastH) buildPts();
     cv.clearRect(0, 0, W, H);
     for (var i = 0; i < pts.length; i++) {
       var p = pts[i];

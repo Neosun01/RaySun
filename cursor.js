@@ -11,13 +11,13 @@
   /* ---------------- 参数（调这里） ---------------- */
   var CONFIG = {
     comet: {                       // 彗星光标（仅精确指针设备）
-      head: 'arrow',               // 头部样式: arrow|dot|ring|cross|diamond|frame|target|dash
+      head: 'dot',                 // 头部样式: dot(圆形)|ring(空心环)|arrow|cross|diamond|frame|target|dash
       size: 11,                    // 头部大小 px
       count: 22,                   // 尾巴数量
       gap: 2,                      // 尾巴长度（历史采样间隔）
       fade: 5,                     // 尾巴渐隐（1 极快 … 10 极慢，5 柔和）
       ease: 0.28,                  // 跟随松紧（小=黏手，大=飘）
-      color: '#bffc01'             // 颜色（站点签名绿）
+      color: '#63d01b'             // 颜色（用户自定义 RGB 99,208,27）
     },
     ripple: {                      // 涟漪点阵背景（鼠标/手指均触发）
       gap: 24,                     // 点间距 px

@@ -12,7 +12,7 @@
   var CONFIG = {
     comet: {                       // 彗星光标（仅精确指针设备）
       head: 'dot',                 // 头部样式: dot(圆形)|ring(空心环)|arrow|cross|diamond|frame|target|dash
-      size: 11,                    // 头部大小 px
+      size: 15,                    // 头部大小 px
       count: 22,                   // 尾巴数量
       gap: 2,                      // 尾巴长度（历史采样间隔）
       fade: 5,                     // 尾巴渐隐（1 极快 … 10 极慢，5 柔和）
@@ -42,9 +42,15 @@
   var P = CONFIG.comet, R = CONFIG.ripple;
 
   /* ---------------- 涟漪点阵 canvas ---------------- */
+  // 背景层方案：把 body 背景搬到 html 上，body 背景清空；
+  // canvas 设 z-index:-1，夹在 html 背景与所有 body 内容之间 → 所有文字/元素都在点上面。
+  var baseSt = document.createElement('style');
+  baseSt.textContent = 'html{background:var(--bg,#fff)!important}body{background:none!important}';
+  document.head.appendChild(baseSt);
+
   var canvas = document.createElement('canvas');
   canvas.id = 'ripple-field';
-  canvas.style.cssText = 'position:fixed;inset:0;pointer-events:none;z-index:1';
+  canvas.style.cssText = 'position:fixed;inset:0;pointer-events:none;z-index:-1';
   document.body.insertBefore(canvas, document.body.firstChild);
 
   var cv = canvas.getContext('2d');

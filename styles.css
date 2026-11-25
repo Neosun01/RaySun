@@ -119,7 +119,7 @@
   --safe-l: env(safe-area-inset-left, 0px);   /* notch / rounded corners in landscape */
   --safe-r: env(safe-area-inset-right, 0px);
   --safe-b: env(safe-area-inset-bottom, 0px);
-  --max: 1440px;
+  --max: 1200px;
 }
 
 * { box-sizing: border-box; }
